@@ -1,0 +1,66 @@
+{% extends 'apps/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load absalut_uri %}
+{% block main_content %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="container">
+                <br>
+                <h3 class="text-center"> Mening havolalarim </h3>
+                <br>
+
+                <div class="row">
+                    {% for stream in streams %}
+                        <div class="col-sm-4">
+                            <div class="card-header">
+                                <h4>{{ stream.name }}</h4>
+                                <h6>Asil Narx: {{ stream.product.price|intcomma }} so'm</h6>
+                                <h6>Chegirma: {{ stream.discount|intcomma }} so'm</h6>
+                                <h6>Foyda: {{ stream.benefit|intcomma }} so'm</h6>
+                            </div>
+                            <div class="card">
+                                <div class="card-body" style="position: relative;">
+                                    <div class="form-group">
+                                        <input type="text" value="{{ request.build_absolute_uri|get_base_url }}{% url 'product_detail_page' stream.id %}"
+                                               class="ref_link form-control">
+                                    </div>
+                                    <button class="copy_ref_bn btn btn-primary"
+                                            style="float:left; margin-right:9px; margin-top: 9px;">Nusxa ko'chirish
+                                    </button>
+                                    <a href="#" target="_blank"><i
+                                            class="fa-solid fa-square-arrow-up-right"
+                                            style="font-size: 29px; float:left; color:#e52c2c; margin-top: 9px; margin-right:9px;"
+                                            aria-hidden="true"></i></a>
+                                    <a href="#" target="_blank"><i
+                                            class="fa-brands fa-telegram"
+                                            style="font-size: 29px; float:left; color:#e52c2c; margin-top: 9px;"
+                                            aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                            <br>
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const copyButtons = document.querySelectorAll('.copy_ref_bn');
+            copyButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const refLinkInput = this.previousElementSibling.querySelector('.ref_link');
+                    refLinkInput.select();
+                    refLinkInput.setSelectionRange(0, 99999);  // For mobile devices
+                    navigator.clipboard.writeText(refLinkInput.value).then(() => {
+                        alert('Havola nusxalandi!');
+                    }).catch(err => {
+                        alert('Havolani nusxalashda xatolik yuz berdi');
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

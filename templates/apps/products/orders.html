@@ -1,0 +1,33 @@
+{% extends 'apps/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block main_content %}
+
+    <!-- User Orders Section -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <h3>My Orders</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Count</th>
+                    <th>Price</th>
+                    <th>Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>{{ order.product.name }}</td>
+                        <td>{{ order.count }}</td>
+                        <td>{{ order.product.price |intcomma }}</td>
+                        <td>{{ order.created_at|date:'Y m d. H:i' }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+

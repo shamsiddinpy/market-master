@@ -1,0 +1,72 @@
+{% extends 'apps/base.html' %}
+{% load static %}
+{% load thumbnail %}
+{% block main_content %}
+    <div class="card-group mt-2">
+        <div class="card overflow-hidden">
+            <div class="card-img-top">
+                <img src="{{ referral_competition.image.url }}" alt="Competition Image" class="img-fluid">
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">alijahon.uz</h3>
+                <p class="card-text">Alijahon.uz sayti navbatdagi konkursiga start beradi, hammaga omad tilaymiz.</p>
+                <div class="row light">
+                    <div class="col-6 col-sm-6 col-lg-4 mb-4">
+                        <div class="card text-white bg-info">
+                            <div class="card-body">
+                                <div class="card-title">Boshlash</div>
+                                <p class="card-text">{{ referral_competition.start_date|date:"d M Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-6 col-lg-4 mb-4">
+                        <div class="card text-white bg-danger">
+                            <div class="card-body">
+                                <div class="card-title">Yakunlash</div>
+                                <p class="card-text">{{ referral_competition.end_date|date:"d M Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="row flex-between-end">
+                <div class="col-auto align-self-center">
+                    <h5 class="mb-0" id="table-example">Konkurs natijalari</h5>
+                </div>
+            </div>
+        </div>
+        <div class="card-body pt-0">
+            <div class="tab-content">
+                <div class="tab-pane preview-tab-pane active" role="tabpanel"
+                     id="dom-316cb649-6a3e-4ec3-9de8-7d83e880873f">
+                    <div id="tableExample">
+                        <div class="table-responsive scrollbar">
+                            <table class="table table-bordered table-striped fs--1 mb-0">
+                                <thead class="bg-200 text-900">
+                                <tr>
+                                    <th class="sort" data-sort="name">№</th>
+                                    <th class="sort" data-sort="username">Sotuvchi</th>
+                                    <th class="sort" data-sort="sold">Sotilgan</th>
+                                </tr>
+                                </thead>
+                                <tbody class="list">
+                                {% for stream_order in stream_orders %}
+                                    <tr>
+                                        <td class="name">{{ index }}</td>
+                                        <td class="username">{{ stream_order.referral_user__first_name }}</td>
+                                        <td class="sold">{{ stream_order.total_orders }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

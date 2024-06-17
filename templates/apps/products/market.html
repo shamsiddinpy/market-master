@@ -1,0 +1,178 @@
+{% extends 'apps/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block main_content %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                 style="display: none;" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Oqim yaratish</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST" class="form-class" action="{% url 'stream_order_form' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="product" id="hidden_product" value="{{ products.id }}">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Oqim nomi</label>
+                                        <input type="text" name="name" class="form-control" placeholder="Oqim nomi"
+                                               required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="discount" class="form-label">Chegirma</label>
+                                        <input type="text" name="discount" class="form-control"
+                                               placeholder="Chegirma miqdori" id="id_discount">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="additional_benefit" class="form-label">Qo'shimcha foyda</label>
+                                        <input type="text" name="benefit" class="form-control"
+                                               placeholder="Qo'shimcha foyda" id="id_additional_benefit">
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input type="checkbox" name="paid_delivery" class="form-check-input"
+                                               id="id_paid_delivery">
+                                        <label class="form-check-label" for="paid_delivery">Pullik dostavka</label>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">Oqim yaratish</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="container border-bottom-4">
+                    <br>
+                    <br>
+                    <h3 class="text-center"> This product is currently on sale </h3>
+                    <br>
+                    <br>
+                    <div class="header_tab_menu">
+                        <div class="header_menu" style="overflow: auto">
+                            <a href="{% url 'market_page' %}" class="active btn btn-default"> All </a>
+                            <a href="{% url 'market_page' %}?category=top_product"
+                               class="btn btn-default">Top
+                                Products</a>
+                            {% for category in categories %}
+                                <a href="{% url 'market_page' %}?category={{ category.slug }}"
+                                   class="btn btn-default">{{ category.name }}</a>
+                            {% endfor %}
+                        </div>
+                        <br>
+                        <div class="search-box" style="width: 100%;">
+                            <form action="{% url 'market_page' %}" method="GET" class="position-relative"
+                                  style="width: 100%" data-bs-display="static" autocomplete="off">
+                                <input id="search-input" name="q" class="form-control search-input" type="search"
+                                       placeholder="Qidiruv..." aria-label="Search">
+                                <svg class="svg-inline--fa fa-search fa-w-16 search-box-icon" aria-hidden="true"
+                                     focusable="false" data-prefix="fas" data-icon="search" role="img"
+                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                    <path fill="currentColor"
+                                          d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path>
+                                </svg>
+                                {% if request.GET.category %}
+                                    <input type="hidden" name="category" value="{{ request.GET.category }}">
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    {% for product in products %}
+                        <div class="col-sm-4 p-2">
+                            <div class="card">
+                                <a href="{% url 'product_detail_page' product.slug %}" target="_blank">
+                                    <img class="card-img-top" src="{{ product.first_image.image.url }}"
+                                         alt="#">
+                                </a>
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a href="{% url 'product_detail_page' product.slug %}" target="_blank">
+                                            {{ product.name }}
+                                        </a>
+                                    </h5>
+                                    <p class="text-muted"> {{ product.price | intcomma }} </p>
+                                </div>
+
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">To'lov: <strong> </strong></li>
+
+                                    <li class="list-group-item">Zaxirada:
+                                        <strong> {{ product.quantity| intcomma }} </strong>
+                                    </li>
+
+                                    <li class="list-group-item">Chegirma:
+                                        <strong> {{ product.Discount | intcomma }} </strong>
+                                    </li>
+
+                                </ul>
+                                <a href="#"
+                                   class="btn bg-danger text-white mt-2">Reklama
+                                    Posti</a>
+                                <button class="btn btn-primary btn_open_modal" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal" name="{{ product.id }}">
+                                    Oqim yaratish
+                                </button>
+                                <a href="#" class="btn bg-danger text-white mt-2">Batafsil</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <div class="card-footer bg-light d-flex justify-content-center">
+                        <div>
+                            {% if page_obj.has_previous %}
+                                <a class="btn btn-falcon-default btn-sm me-2"
+                                   href="?category={{ request.GET.category }}&page={{ page_obj.previous_page_number }}"
+                                   data-bs-toggle="tooltip" data-bs-placement="top" title="Prev">
+                                    <span class="fas fa-chevron-left"></span>
+                                </a>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if num == page_obj.number %}
+                                    <a class="btn btn-sm btn-falcon-default text-primary me-2"
+                                       href="?category={{ request.GET.category }}&page={{ num }}">{{ num }}</a>
+                                {% elif num|add:"-3" < page_obj.number and page_obj.number < num|add:"3" %}
+                                    <a class="btn btn-sm btn-falcon-default me-2"
+                                       href="?category={{ request.GET.category }}&page={{ num }}">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <a class="btn btn-falcon-default btn-sm" type="button" data-bs-toggle="tooltip"
+                                   data-bs-placement="top" title="Next"
+                                   href="?category={{ request.GET.category }}&page={{ page_obj.next_page_number }}">
+                                    <span class="fas fa-chevron-right"></span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $('.btn_open_modal').on('click', function () {
+            let product_id = $(this).attr('name');
+            $('#hidden_product').val(product_id);
+        })
+    </script>
+{% endblock %}
