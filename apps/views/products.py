@@ -8,11 +8,11 @@ from django.utils import timezone
 from django.views.generic import ListView, DetailView, FormView
 
 from apps.forms import OrderModelForm, StreamOrderModelForm
-from apps.models.products import Product, Category, Order, Stream
+from apps.models.products import Product, Category, Order, Stream, SiteSetting
 
 
 class ProductListView(ListView):
-    paginate_by = 3
+    paginate_by = 9
     model = Product
     template_name = 'apps/products/index.html'
     context_object_name = 'products'
@@ -37,28 +37,12 @@ class ProductDetailView(FormView, DetailView):
 
     def form_valid(self, form):
         order = form.save(commit=False)
-        order.user = self.request.user
-        order = form.save()
+        if self.request.user.is_authenticated:
+            order.user = self.request.user
+        order.save()
         return redirect('product_success', pk=order.id)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        stream_id = self.kwargs.get(self.pk_url_kwarg, '')
-        context['stream_id'] = self.kwargs.get(self.pk_url_kwarg, '')
-
-        if stream_id:
-            stream = get_object_or_404(Stream, pk=stream_id)
-            adjusted_price = self.get_adjusted_price(stream.product.price, stream.discount, stream.benefit)
-            context['adjusted_price'] = adjusted_price
-        return context
-
-    def get_adjusted_price(self, original_price, discount, benefit=None):
-        if benefit is None:
-            benefit = 0
-        adjusted_price = original_price - discount + benefit
-        return adjusted_price
-
-    def get_object(self, queryset=None):
+    def get_current_obj(self):
         pk = self.kwargs.get(self.pk_url_kwarg)
         slug = self.kwargs.get(self.slug_url_kwarg)
 
@@ -66,10 +50,32 @@ class ProductDetailView(FormView, DetailView):
             stream = get_object_or_404(Stream.objects.all(), pk=pk)
             stream.counter += 1
             stream.save()
-            return stream.product
+            return stream.product, stream
 
         product = get_object_or_404(Product.objects.all(), slug=slug)
+        return product, None
+
+    def get_object(self, queryset=None):
+        product, _ = self.get_current_obj()
         return product
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['stream_id'] = self.kwargs.get(self.pk_url_kwarg, '')
+        product, stream = self.get_current_obj()
+
+        if stream:
+            price = product.price
+            if stream.benefit:
+                price += stream.benefit
+            if stream.discount:
+                price -= stream.discount
+        else:
+            price = product.price
+
+        context['adjusted_price'] = price
+        context['product'] = product
+        return context
 
 
 class OrderProductSuccessDetailView(DetailView):
@@ -79,25 +85,26 @@ class OrderProductSuccessDetailView(DetailView):
     slug_field = 'slug'
 
 
-class OrderListView(ListView):
+class OrderListView(LoginRequiredMixin, ListView):
     paginate_by = 5
     template_name = 'apps/products/orders.html'
     queryset = Order.objects.order_by('created_at')
     context_object_name = 'orders'
 
     def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user)
+        return super().get_queryset().filter(user=self.request.user).order_by('created_at')
 
 
 class MarketProductListView(ListView):
     model = Product
     template_name = 'apps/products/market.html'
     context_object_name = 'products'
-    paginate_by = 3
+    paginate_by = 9
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
+        context['delivery_to'] = SiteSetting.objects.first()
         return context
 
     def get_queryset(self):
@@ -193,7 +200,15 @@ class UserRequestsListView(LoginRequiredMixin, ListView):
     context_object_name = 'orders'
 
     def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user)
+        return super().get_queryset().filter(user=self.request.user, stream__isnull=False)
+
+
+class ShoppingCard(ListView):
+    template_name = 'apps/products/shopping_card.html'
+    model = Product
+
+    def get_queryset(self):
+        return super().get_queryset()
 
 
 class WishesUserListView(ListView):

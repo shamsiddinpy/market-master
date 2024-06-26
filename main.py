@@ -41,9 +41,6 @@ def send_welcome(message):
     except User.DoesNotExist:
         bot.send_message(message.chat.id,
                          "Foydalanuvchi topilmadi. Iltimos, avval /start orqali kontaktingizni yuborish orqali ro'yxatdan o'ting.")
-        bot.send_message(message.chat.id,
-                         "Saytimizga kirish uchun bu yerni bosing: http://localhost:8001/profile/settings/login-check")
-
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -95,8 +92,6 @@ def handle_new_password(call):
     except User.DoesNotExist:
         bot.send_message(call.message.chat.id,
                          "Foydalanuvchi topilmadi. Iltimos, avval /start orqali kontaktingizni yuborish orqali ro'yxatdan o'ting.")
-        bot.send_message(call.message.chat.id,
-                         "Saytimizga kirish uchun bu yerni bosing: http://localhost:8001/profile/settings/login-check")
 
 
 bot.infinity_polling()

@@ -22,16 +22,11 @@
             async=""></script>
     <script async="" src="https://connect.facebook.net/en_US/fbevents.js"></script>
     <script src="{% static 'apps/assets/js/config.js' %}"></script>
-    <script src="/static/app/assets/js/lightbox.min.js"></script>
-    <script src="/static/app/vendors/overlayscrollbars/OverlayScrollbars.min.js"></script>
-    <link href="/static/app/vendors/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <script src="{% static 'apps/assets/js/lightbox.min.js' %}"></script>
+    <script src="{% static 'apps/vendors/overlayscrollbars/OverlayScrollbars.min.js' %}"></script>
+    <link href="{% static 'apps/vendors/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js">
-    </script>
-    <script src="/static/apps/vendors/overlayscrollbars/OverlayScrollbars.min.js"></script>
-    <script src="{% static 'apps/vendors/overlayscrollbars/OverlayScrollbars.min.js' %}"></script>
-
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap"
           rel="stylesheet">
@@ -129,16 +124,20 @@
                                         class="nav-link-text ps-1">{% trans 'Homepage' %}</span>
                                 </div>
                             </a>
-                                <!-- more inner pages-->
                             </li>
-                            <!-- more inner pages-->
                             </li>
                             <li class="nav-item"><a class="nav-link"
                                                     href="{% url 'order_products' %}"
                                                     aria-expanded="false">
-                                <div class="d-flex align-items-center"><span
-                                        class="nav-link-text ps-1">{% trans 'Orders' %}</span>
-                                </div>
+                                {% if user.is_authenticated %}
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">{% trans 'Orders' %}</span>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-danger" role="alert">
+                                        Iltimos, tizimga kirish uchun <a href="{% url 'login_page' %}">login qiling</a>.
+                                    </div>
+                                {% endif %}
                             </a>
                                 <!-- more inner pages-->
                             </li>
@@ -240,54 +239,6 @@
                             <div class="dropdown-menu border font-base start-0 mt-2 py-0 overflow-hidden w-100">
                                 <div class="scrollbar list py-3" style="max-height: 24rem;">
                                     <h6 class="dropdown-header fw-medium text-uppercase px-card fs--2 pt-0 pb-2">
-                                        Recently Browsed</h6><a class="dropdown-item fs--1 px-card py-1 hover-primary"
-                                                                href="app/events/event-detail.html">
-                                    <div class="d-flex align-items-center">
-                                        <span class="fas fa-circle me-2 text-300 fs--2"></span>
-
-                                        <div class="fw-normal title">Pages <span
-                                                class="fas fa-chevron-right mx-1 text-500 fs--2"
-                                                data-fa-transform="shrink-2"></span> Events
-                                        </div>
-                                    </div>
-                                </a>
-                                    <a class="dropdown-item fs--1 px-card py-1 hover-primary"
-                                       href="app/e-commerce/customers.html">
-                                        <div class="d-flex align-items-center">
-                                            <span class="fas fa-circle me-2 text-300 fs--2"></span>
-
-                                            <div class="fw-normal title">E-commerce <span
-                                                    class="fas fa-chevron-right mx-1 text-500 fs--2"
-                                                    data-fa-transform="shrink-2"></span> Customers
-                                            </div>
-                                        </div>
-                                    </a>
-
-                                    <hr class="bg-200 dark__bg-900"/>
-                                    <h6 class="dropdown-header fw-medium text-uppercase px-card fs--2 pt-0 pb-2">
-                                        Suggested Filter</h6><a class="dropdown-item px-card py-1 fs-0"
-                                                                href="app/e-commerce/customers.html">
-                                    <div class="d-flex align-items-center"><span
-                                            class="badge fw-medium text-decoration-none me-2 badge-soft-warning">customers:</span>
-                                        <div class="flex-1 fs--1 title">All customers list</div>
-                                    </div>
-                                </a>
-                                    <a class="dropdown-item px-card py-1 fs-0" href="app/events/event-detail.html">
-                                        <div class="d-flex align-items-center"><span
-                                                class="badge fw-medium text-decoration-none me-2 badge-soft-success">events:</span>
-                                            <div class="flex-1 fs--1 title">Latest events in current month</div>
-                                        </div>
-                                    </a>
-                                    <a class="dropdown-item px-card py-1 fs-0"
-                                       href="app/e-commerce/product/product-grid.html">
-                                        <div class="d-flex align-items-center"><span
-                                                class="badge fw-medium text-decoration-none me-2 badge-soft-info">products:</span>
-                                            <div class="flex-1 fs--1 title">Most popular products</div>
-                                        </div>
-                                    </a>
-
-                                    <hr class="bg-200 dark__bg-900"/>
-                                    <h6 class="dropdown-header fw-medium text-uppercase px-card fs--2 pt-0 pb-2">
                                         Files</h6><a class="dropdown-item px-card py-2" href="#!">
                                     <div class="d-flex align-items-center">
                                         <div class="file-thumbnail me-2"><img
@@ -313,53 +264,8 @@
                                         </div>
                                     </a>
 
-                                    <hr class="bg-200 dark__bg-900"/>
-                                    <h6 class="dropdown-header fw-medium text-uppercase px-card fs--2 pt-0 pb-2">
-                                        Members</h6><a class="dropdown-item px-card py-2"
-                                                       href="pages/user/profile.html">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-l status-online me-2">
-                                            <img class="rounded-circle" src="{% static 'apps/alijon/9187604.png' %}"
-                                                 alt=""/>
-
-                                        </div>
-                                        <div class="flex-1">
-                                            <h6 class="mb-0 title">Anna Karinina</h6>
-                                            <p class="fs--2 mb-0 d-flex">Technext Limited</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                    <a class="dropdown-item px-card py-2" href="pages/user/profile.html">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar avatar-l me-2">
-                                                <img class="rounded-circle"
-                                                     src="{% static 'apps/alijon/9187604.png' %}" alt=""/>
-
-                                            </div>
-                                            <div class="flex-1">
-                                                <h6 class="mb-0 title">Antony Hopkins</h6>
-                                                <p class="fs--2 mb-0 d-flex">Brain Trust</p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a class="dropdown-item px-card py-2" href="pages/user/profile.html">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar avatar-l me-2">
-                                                <img class="rounded-circle"
-                                                     src="{% static 'apps/alijon/9187604.png' %}" alt=""/>
-
-                                            </div>
-                                            <div class="flex-1">
-                                                <h6 class="mb-0 title">Emma Watson</h6>
-                                                <p class="fs--2 mb-0 d-flex">Google</p>
-                                            </div>
-                                        </div>
-                                    </a>
-
                                 </div>
-                                <div class="text-center mt-n3">
-                                    <p class="fallback fw-bold fs-1 d-none">No Result Found.</p>
-                                </div>
+
                             </div>
                         </div>
                     </li>
@@ -383,6 +289,25 @@
                                    for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left"
                                    title="Switch to dark theme"><span class="fas fa-moon fs-0"></span></label>
                         </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link px-0 notification-indicator notification-indicator-warning notification-indicator-fill fa-icon-wait"
+                           href="{% url 'card' %}">
+                            <svg class="svg-inline--fa fa-shopping-cart fa-w-18" data-fa-transform="shrink-7"
+                                 style="font-size: 33px;transform-origin: 0.5625em 0.5em;" aria-hidden="true"
+                                 focusable="false" data-prefix="fas" data-icon="shopping-cart" role="img"
+                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg="">
+                                <g transform="translate(288 256)">
+                                    <g transform="translate(0, 0)  scale(0.5625, 0.5625)  rotate(0 0 0)">
+                                        <path fill="currentColor"
+                                              d="M528.12 301.319l47.273-208C578.806 78.301 567.391 64 551.99 64H159.208l-9.166-44.81C147.758 8.021 137.93 0 126.529 0H24C10.745 0 0 10.745 0 24v16c0 13.255 10.745 24 24 24h69.883l70.248 343.435C147.325 417.1 136 435.222 136 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-15.674-6.447-29.835-16.824-40h209.647C430.447 426.165 424 440.326 424 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-22.172-12.888-41.332-31.579-50.405l5.517-24.276c3.413-15.018-8.002-29.319-23.403-29.319H218.117l-6.545-32h293.145c11.206 0 20.92-7.754 23.403-18.681z"
+                                              transform="translate(-288 -256)"></path>
+                                    </g>
+                                </g>
+                            </svg>
+                            <span class="notification-indicator-number">1</span></a>
+
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link notification-indicator notification-indicator-primary px-0 fa-icon-wait"
@@ -527,7 +452,7 @@
                                     <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
                                     <a class="dropdown-item" href="{% url 'favorites' %}">Sevimlilar</a>
                                     <a class="dropdown-item" href="{% url 'user_settings_update' %}">Sozlamalar</a>
-                                    <a class="dropdown-item fw-bold text-warning" href="#"><span
+                                    <a class="dropdown-item fw-bold text-warning" href="{% url 'admin_page' %}"><span
                                             class="fas fa-crown me-1"></span><span>Adminla uchun</span></a>
                                     <a class="dropdown-item" href="#">Savolar bo'yicha</a>
                                     <div class="dropdown-divider"></div>

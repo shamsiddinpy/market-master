@@ -1,0 +1,141 @@
+{% extends "admin/change_list.html" %}
+{% load humanize %}
+
+{% block content_title %}
+    <h1>Balance Report</h1>
+{% endblock %}
+
+{% block result_list %}
+    <div class="results">
+        <table>
+            <thead>
+            <tr>
+                <th>
+                    <div class="text">
+                        <a href="#">Status</a>
+                    </div>
+                </th>
+                <th>
+                    <div class="text">
+                        <a href="#">Real Balance</a>
+                    </div>
+                </th>
+                <th>
+                    <div class="text">
+                        <a href="#">Expected Balance</a>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="{% cycle 'row1' 'row2' %}">
+                <td>Operators</td>
+                <td>{{ operator_balance | intcomma }} UZS</td>
+                <td>{{ operator_possible_balance | intcomma }} UZS</td>
+            </tr>
+            <tr class="{% cycle 'row1' 'row2' %}">
+                <td>Users</td>
+                <td>{{ user_balance | intcomma }} UZS</td>
+                <td>{{ user_possible_balance | intcomma }} UZS</td>
+            </tr>
+            <tr class="{% cycle 'row1' 'row2' %}">
+                <td>Admins</td>
+                <td>{{ admin_balance | intcomma }} UZS</td>
+                <td>{{ admin_possible_balance | intcomma }} UZS</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr style="font-weight: bold; border-top: 2px solid #DDDDDD;">
+                <td>Total</td>
+                <td>{{ total_balance | intcomma }} UZS</td>
+                <td>{{ possible_total_balance | intcomma }} UZS</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div style="display: flex; justify-content: space-around;">
+        <!-- First Bar Chart - Real Balance -->
+        <div>
+            <h2>Real Balance</h2>
+            <div style="width: 400px; height: 300px;">
+                <canvas id="realBalanceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Second Bar Chart - Expected Balance -->
+        <div>
+            <h2>Expected Balance</h2>
+            <div style="width: 400px; height: 300px;">
+                <canvas id="expectedBalanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Real Balance Chart
+            var ctx1 = document.getElementById('realBalanceChart').getContext('2d');
+            var realBalanceChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Operators', 'Users', 'Admins'],
+                    datasets: [{
+                        label: 'Real Balance',
+                        data: [{{ operator_balance }}, {{ user_balance }}, {{ admin_balance }}],
+                        backgroundColor: '#FF6384',
+                        borderColor: '#FF6384',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return value.toLocaleString() + ' UZS';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Expected Balance Chart
+            var ctx2 = document.getElementById('expectedBalanceChart').getContext('2d');
+            var expectedBalanceChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['Operators', 'Users', 'Admins'],
+                    datasets: [{
+                        label: 'Expected Balance',
+                        data: [{{ operator_possible_balance }}, {{ user_possible_balance }}, {{ admin_possible_balance }}],
+                        backgroundColor: '#4BC0C0',
+                        borderColor: '#4BC0C0',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return value.toLocaleString() + ' UZS';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block pagination %}{% endblock %}

@@ -1,13 +1,15 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
 from django.core.cache import cache
 from django.db.models import Sum
+from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.urls import reverse_lazy
+from django.utils.translation import activate
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import UpdateView, TemplateView, ListView, FormView
@@ -18,9 +20,6 @@ from apps.models import User
 from apps.models.products import Region, District, Order, Stream, Competition, SiteSetting
 from apps.models.users import PaymeRequest
 from apps.utils import resize_image
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.utils.translation import activate
 
 
 class LoginUserView(FormView):
@@ -31,7 +30,7 @@ class LoginUserView(FormView):
     def form_valid(self, form):
         user = form.get_user()
         if user is not None:
-            if user.type == User.Type.OPERATOR:
+            if user.status == User.Status.OPERATOR:
                 login(self.request, user)
                 return redirect('operator')
             else:
@@ -72,15 +71,18 @@ class UserSettingsImageUpdateView(LoginRequiredMixin, UpdateView):
         user = form.save(commit=False)
 
         if 'avatar' in form.files:
-            user.avatar = form.files['avatar']
-            user.save()
-            resize_image(user.avatar.path, size=(300, 300))
+            avatar = form.files['avatar']
+            resized_avatar = resize_image(avatar, size=(300, 300))
+            if resized_avatar:
+                user.avatar.save(resized_avatar.name, resized_avatar)
 
         if 'banner' in form.files:
-            user.banner = form.files['banner']
-            user.save()
-            resize_image(user.banner.path, size=(1200, 300))
+            banner = form.files['banner']
+            resized_banner = resize_image(banner, size=(1200, 300))
+            if resized_banner:
+                user.banner.save(resized_banner.name, resized_banner)
 
+        user.save()
         return super().form_valid(form)
 
 
@@ -181,6 +183,10 @@ class PaymeFormView(LoginRequiredMixin, FormView):
         return redirect('withdraw')
 
 
+class WidgetsTemplateView(TemplateView):
+    template_name = 'apps/admin/widgets.html'
+
+
 class PaymeListView(LoginRequiredMixin, ListView):
     template_name = 'apps/admin/payment.html'
     model = PaymeRequest
@@ -206,7 +212,3 @@ def change_language(request, language):
     request.session['django_language'] = language
     activate(language)
     return HttpResponseRedirect(reverse('product_list_page'))
-
-
-class BalanceReportListView(ListView):
-    pass

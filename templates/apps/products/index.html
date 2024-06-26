@@ -9,7 +9,7 @@
                 <div class="col">
                     <h5 class="mb-0" id="followers"></h5>
                 </div>
-                <div class="col text-end"><a class="font-sans-serif" href="/category">Kategoriyalar</a>
+                <div class="col text-end"><a class="font-sans-serif" href="{% url 'market_page' %}">Kategoriyalar</a>
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
                         <div class="overflow-hidden">
                             <div class="position-relative rounded-top overflow-hidden">
                                 <a class="d-block" href="{% url 'product_detail_page' product.slug %}">
-                                        <img class="img-fluid rounded-top" src="{{ product.first_image.image.url }}">
+                                    <img class="img-fluid rounded-top" src="{{ product.first_image.image.url }}">
                                     <span class="badge rounded-pill bg-success position-absolute mt-2 me-2 z-index-2 top-0 end-0">New</span>
                                 </a>
                             </div>
@@ -70,7 +70,8 @@
                             </a>
                             <div>
                                 <a class="btn btn-sm btn-falcon-default" style="width: 130px;" href="#"
-                                   data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Cart">
+                                   data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Cart"
+                                   onclick="addToWishList('{{ product.id }}')">
                                     <svg class="svg-inline--fa fa-cart-plus fa-w-18" aria-hidden="true"
                                          focusable="false" data-prefix="fas" data-icon="cart-plus" role="img"
                                          xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg="">
@@ -118,14 +119,12 @@
 
     <script>
         function addToWishList(productId) {
-            // Your logic for adding to the wish list goes here
-            // For example, you might send an AJAX request to the server
             console.log("Product added to wish list: " + productId);
             fetch(`/wishlist/add/${productId}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
+                    'X-CSRFToken': '{% csrf_token %}',
                 },
                 body: JSON.stringify({product_id: productId})
             })
@@ -142,4 +141,29 @@
                 });
         }
     </script>
+
+    {#    <script type="text/javascript">#}
+    {#        var user = '{{ request.user }}'#}
+    {##}
+    {#        function getCookie(name) {#}
+    {#            var cookieValue = null#}
+    {#            if (document.cookie && document.cookie !== '') {#}
+    {#                var cookies = document.cookie.split(';');#}
+    {#                for (var i = 0; i < cookies; i++) {#}
+    {#                    var cookie = cookies[i].trim();#}
+    {#                    if (cookie.substring(0, name.length + 1) === (name + '=')) {#}
+    {#                        cookieValue = decodeURIComponent(cookie.substring(#}
+    {#                            name.length + 1#}
+    {#                        ));#}
+    {#                        break;#}
+    {#                    }#}
+    {#                }#}
+    {##}
+    {#            }#}
+    {#            return cookieValue#}
+    {#        }#}
+    {##}
+    {#        var csrftoken = getCookie('csrftoken')#}
+    {##}
+    {#    </script>#}
 {% endblock %}

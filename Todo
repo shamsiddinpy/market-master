@@ -1,0 +1,16 @@
+
+
+reja:
+    1) lake va card ishlatish
+    2) requestni faqat stream orqali zakas berilanlarni chiqarish ✅
+    3) viloyat saxranit qilgandan ush viloyatga bo'lgan tumanlarni chiqarish ✅
+    4) "parolni oz'gartirsh"da agar user login qilsa parolni o'zgartira olsin agar teligram bot orqali kirsa ko'rsatmaslik
+    5) stream yaratganda user o'z fodasi qo'shib qo'ysa usha tavar status delavied bo'lsa userni balancega qo'shib qo'yish
+    6) teligram xabar yuborish
+    7) manager pul chiqaradishni taminlash ✅
+    8) from_working_time to_work_time password shu filedlar faqat operatorda bo'lishi kerak 020 accountdan
+    9) adminkada login pagda phoneni chiroyli chiqarish
+    10) django-debug-toolbar✅
+    11) ./init-db.sh 998908840720
+
+

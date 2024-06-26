@@ -15,14 +15,18 @@
                         <div class="col-sm-4">
                             <div class="card-header">
                                 <h4>{{ stream.name }}</h4>
-                                <h6>Asil Narx: {{ stream.product.price|intcomma }} so'm</h6>
-                                <h6>Chegirma: {{ stream.discount|intcomma }} so'm</h6>
-                                <h6>Foyda: {{ stream.benefit|intcomma }} so'm</h6>
+                                {% if stream.discount %}
+                                    <h6>Chegirma: {{ stream.discount|intcomma }} so'm</h6>
+                                {% endif %}
+                                {% if stream.benefit %}
+                                    <h6>Foyda: {{ stream.benefit|intcomma }} so'm</h6>
+                                {% endif %}
                             </div>
                             <div class="card">
                                 <div class="card-body" style="position: relative;">
                                     <div class="form-group">
-                                        <input type="text" value="{{ request.build_absolute_uri|get_base_url }}{% url 'product_detail_page' stream.id %}"
+                                        <input type="text"
+                                               value="{{ request.build_absolute_uri|get_base_url }}{% url 'product_detail_page' stream.id %}"
                                                class="ref_link form-control">
                                     </div>
                                     <button class="copy_ref_bn btn btn-primary"

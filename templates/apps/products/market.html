@@ -109,14 +109,15 @@
                                 </div>
 
                                 <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">To'lov: <strong> </strong></li>
+                                    <li class="list-group-item">To'lov:
+                                        <strong>{{ delivery_to.delivery_to|intcomma }} </strong></li>
 
                                     <li class="list-group-item">Zaxirada:
                                         <strong> {{ product.quantity| intcomma }} </strong>
                                     </li>
 
                                     <li class="list-group-item">Chegirma:
-                                        <strong> {{ product.Discount | intcomma }} </strong>
+                                        <strong> {{ product.discount | intcomma  }} </strong>
                                     </li>
 
                                 </ul>

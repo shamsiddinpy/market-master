@@ -18,11 +18,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.humanize',
     'django.contrib.messages',
+    'debug_toolbar',
     'django.contrib.staticfiles',
     'apps.apps.AppsConfig',
     'django_ckeditor_5',
     'sorl.thumbnail',
-    # 'minio_storage',
     'parler'
 ]
 
@@ -35,6 +35,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'root.urls'
@@ -137,11 +138,13 @@ DJANGORESIZED_DEFAULT_KEEP_META = True
 DJANGORESIZED_DEFAULT_FORCE_FORMAT = 'JPEG'
 DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'JPEG': ".jpg"}
 DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
-# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-# AWS_ACCESS_KEY_ID = 'bgNbOyqT38AaLA4dXp3W'
-# AWS_SECRET_ACCESS_KEY = 'bgNbOyqT38AaLA4dXp3W'
-# AWS_STORAGE_BUCKET_NAME = 'media'  # MINIO_BUCKET_NAME
-# AWS_S3_ENDPOINT_URL = os.getenv('MINIO_ENDPOINT')  # MINIO_ENDPOINT
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+AWS_ACCESS_KEY_ID = 'tRW26479PRacGz3TKlea'
+AWS_SECRET_ACCESS_KEY = '4Me2Vj8VFfEIhXgyrhVYce8Yi2JYOQbksF6x4COu'
+AWS_STORAGE_BUCKET_NAME = 'aljahon'
+AWS_S3_ENDPOINT_URL = 'http://localhost:9000'
+
 
 customColorPalette = [
     {
@@ -228,15 +231,15 @@ LOGIN_URL = 'login_page'
 LOGOUT_REDIRECT_URL = '/'
 
 JAZZMIN_SETTINGS = {
-    "site_title": "Library Admin",
+    "site_title": "Aljahon Admin",
     "site_header": "Library",
     "site_brand": "Library",
-    "site_logo": "books/img/logo.png",
+    "site_logo": "apps/alijon/download.png",
     "login_logo": None,
     "login_logo_dark": None,
     "site_logo_classes": "img-circle",
     "site_icon": None,
-    "welcome_sign": "Welcome to the library",
+    "welcome_sign": "Welcome to the aljahon",
     "copyright": "Acme Library Ltd",
     "search_model": ["auth.User", "auth.Group"],
     "user_avatar": None,
@@ -248,7 +251,7 @@ JAZZMIN_SETTINGS = {
     ],
     "usermenu_links": [
         {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
-        {"model": "auth.User"}
+        {"model": "auth.user"}
     ],
     "show_sidebar": True,
     "navigation_expanded": True,
@@ -267,15 +270,12 @@ JAZZMIN_SETTINGS = {
         "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
         "auth.Group": "fas fa-users",
-        "uz": "flag-icon-uz",  # O'zbek tilining bayroqi
-        "en": "flag-icon-gb",  # Ingliz tilining bayroqi
-        "ru": "flag-icon-ru",  # Rus tilining bayroqi
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
     "related_modal_active": False,
     "custom_css": None,
-    "custom_js": None,
+    "custom_js": "apps/assets/js/login_phone.js",
     "use_google_fonts_cdn": True,
     "show_ui_builder": False,
     "changeform_format": "horizontal_tabs",
@@ -295,3 +295,8 @@ AUTHENTICATION_BACKENDS = [
     # 'django.contrib.auth.backends.ModelBackend',
 ]
 
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]

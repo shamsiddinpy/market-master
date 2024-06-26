@@ -13,6 +13,47 @@
             color: red;
             font-weight: bold;
         }
+
+        .header {
+            color: #008000;
+            font-weight: bold;
+        }
+
+        .Error {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* Styles for full-screen image display */
+        .fullscreen-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow: hidden;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fullscreen-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            cursor: pointer;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
     </style>
     <div class="card mb-3">
         <div class="card-body">
@@ -26,7 +67,8 @@
                             </div>
                             <div class="card-body">
                                 <h5 class="card-title">Asosiy balansda: {{ user.main_balance | intcomma }} so'm</h5>
-                                <h5 class="card-title">To'lab berildi: {{ total_paid_amount | intcomma }} so'm</h5>
+                                <h5 class="card-title">To'lab
+                                    berildi: {{ total_paid_amount | intcomma |default_if_none:'' }} so'm</h5>
                             </div>
                         </div>
                     </div>
@@ -91,6 +133,7 @@
                             <th scope="col" class="header">Summa</th>
                             <th scope="col" class="header">Holat</th>
                             <th scope="col" class="header">Xabar</th>
+                            <th scope="col" class="header">Photo</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -101,10 +144,16 @@
                                 <td>{{ payment.amount|intcomma }}</td>
                                 <td>{{ payment.status }}</td>
                                 <td>{{ payment.message|default_if_none:'' }}</td>
+                                <td>
+                                    <img src="{{ payment.image.url }}" class="img-thumbnail full-screen-image"
+                                         alt="Thumbnail" data-fullscreen-url="{{ payment.image.url }}" width="60"
+                                         height="60">
+
+                                </td>
                             </tr>
                         {% empty %}
                             <tr class="text-center">
-                                <th colspan="5" class="Error"> Hozircha sizda pul yechish sorovlari mavjud emas</th>
+                                <th colspan="6" class="Error">Hozircha sizda pul yechish sorovlari mavjud emas</th>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -133,4 +182,28 @@
             });
         });
     });
+    document.addEventListener('DOMContentLoaded', function () {
+        const fullscreenContainer = document.querySelector('.fullscreen-container');
+        const fullscreenImage = fullscreenContainer.querySelector('.fullscreen-image');
+        const closeBtn = fullscreenContainer.querySelector('.close-btn');
+        const thumbnailImages = document.querySelectorAll('.full-screen-image');
+
+        thumbnailImages.forEach(function (img) {
+            img.addEventListener('click', function () {
+                fullscreenImage.src = this.dataset.fullscreenUrl;
+                fullscreenContainer.style.display = 'flex';
+            });
+        });
+
+        closeBtn.addEventListener('click', function () {
+            fullscreenContainer.style.display = 'none';
+        });
+
+        fullscreenContainer.addEventListener('click', function (e) {
+            if (e.target === fullscreenContainer) {
+                fullscreenContainer.style.display = 'none';
+            }
+        });
+    });
 </script>
+
