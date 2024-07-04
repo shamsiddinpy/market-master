@@ -2,7 +2,6 @@ from django.core.validators import RegexValidator
 from django.db.models import DateTimeField, Model, CharField, SlugField, ForeignKey, CASCADE, PositiveIntegerField, \
     JSONField, FloatField, TextChoices, IntegerField, BooleanField, DateField, DecimalField, ImageField
 from django.utils.text import slugify
-from django.views.generic import TemplateView
 from django_ckeditor_5.fields import CKEditor5Field
 
 from apps.models.users import User
@@ -49,16 +48,19 @@ class Category(CreatedBaseModel):
 
 
 class Product(CreatedBaseModel):
-    name = CharField(max_length=100)
-    description = CKEditor5Field(null=True, blank=True)
+    name = CharField(max_length=100, verbose_name='Mahsulotning Nomi')
+    description = CKEditor5Field(null=True, blank=True, verbose_name='Mahsulot haqida ')
     slug = SlugField(max_length=25, unique=True, editable=False)
     category = ForeignKey('apps.Category', CASCADE, related_name='products', to_field='slug',
                           verbose_name="Category")
-    price = IntegerField()
-    quantity = PositiveIntegerField(default=0)
+    price = IntegerField(verbose_name='Mahsulot narxi')
+    quantity = PositiveIntegerField(default=0, blank=True, null=True, verbose_name='Mahsulot soni')
     spec = JSONField(null=True, blank=True)
-    discount = FloatField(null=True, blank=True)
-    referral_reward = DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    discount = FloatField(default=0, blank=True, null=True, verbose_name='Mahsulotning chegirmasi')
+    user_payment = FloatField(null=True, blank=True,
+                              verbose_name='Mahsulot sotilgandan keyin userga beriladigan suma')
+    referral_reward = DecimalField(verbose_name='referal mukafoti', max_digits=10, decimal_places=2, null=True,
+                                   blank=True)
 
     class Meta:
         verbose_name = 'Product'
@@ -70,10 +72,6 @@ class Product(CreatedBaseModel):
 
     def __str__(self):
         return self.name
-
-    @property
-    def delivery_price(self):
-        return self.discount * self.price / 100
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.slug:
@@ -109,7 +107,7 @@ class Order(CreatedBaseModel):
     count = PositiveIntegerField(default=1)
     status = CharField(max_length=30, choices=Status.choices, default=Status.NEW)
     product = ForeignKey('apps.Product', CASCADE, verbose_name="Product", to_field='slug')
-    currier = ForeignKey('apps.User', CASCADE, limit_choices_to={'type': User.Status.CURRIER}, null=True, blank=True,
+    currier = ForeignKey('apps.User', CASCADE, limit_choices_to={'status': User.Status.CURRIER}, null=True, blank=True,
                          verbose_name="Currier")
     region = ForeignKey('apps.Region', CASCADE, verbose_name='Region', blank=True, null=True)
     district = ForeignKey('apps.District', CASCADE, verbose_name='District', null=True, blank=True)
@@ -119,12 +117,15 @@ class Order(CreatedBaseModel):
                           related_name='operator_orders', blank=True, null=True, verbose_name='Operator')
     user = ForeignKey('apps.User', CASCADE, blank=True, null=True, related_name='user', verbose_name='User')
     referral_user = ForeignKey('apps.User', CASCADE, related_name='referral_user', blank=True, null=True,
-                               verbose_name="Referral User")
+                               verbose_name="yo'naltiruvchi foydalanuvchi ")
 
     class Meta:
         ordering = ['created_at']
         verbose_name = 'Order'
         verbose_name_plural = 'Orders'
+
+    def __str__(self):
+        return self.name
 
 
 class Region(Model):
@@ -149,7 +150,7 @@ class District(Model):
 
 class Stream(Model):
     name = CharField(max_length=100)
-    counter = IntegerField(default=0)
+    counter = IntegerField(default=0, verbose_name='')
     product = ForeignKey('apps.Product', CASCADE, verbose_name="Product")
     user = ForeignKey('apps.User', CASCADE, verbose_name="User")
     created_at = DateTimeField(auto_now_add=True)
@@ -177,5 +178,9 @@ class Competition(Model):
         verbose_name_plural = 'Competitions'
 
 
-class AdminPageTemplateView(TemplateView):
-    template_name = 'apps/admin/admin_page.html'
+class Wishlist(Model):
+    user = ForeignKey('apps.User', CASCADE, verbose_name='wishlist_users')
+    product = ForeignKey('apps.Product', CASCADE, verbose_name='wishlist_product')
+
+    class Meta:
+        unique_together = ('user', 'product')

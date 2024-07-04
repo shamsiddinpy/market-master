@@ -7,7 +7,7 @@ from django.forms import CharField, PasswordInput, ModelForm, ModelChoiceField
 
 from apps.models import Product, User
 from apps.models.products import Order, Stream, Region, District
-from apps.models.users import PaymeRequest, ProfileModel
+from apps.models.users import PaymeRequest
 
 
 class LoginModelForm(AuthenticationForm):
@@ -93,5 +93,3 @@ class PaymeModelForm(ModelForm):
             if not card_number.isdigit():
                 raise ValidationError("Karta raqami faqat raqamlardan iborat bo'lishi kerak.")
         return card_number
-
-

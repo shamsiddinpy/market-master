@@ -110,14 +110,14 @@
 
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">To'lov:
-                                        <strong>{{ delivery_to.delivery_to|intcomma }} </strong></li>
+                                        <strong>{{ product.user_payment|intcomma|default_if_none:'' }} </strong></li>
 
                                     <li class="list-group-item">Zaxirada:
                                         <strong> {{ product.quantity| intcomma }} </strong>
                                     </li>
 
                                     <li class="list-group-item">Chegirma:
-                                        <strong> {{ product.discount | intcomma  }} </strong>
+                                        <strong> {{ product.discount | intcomma |default_if_none:'' }} </strong>
                                     </li>
 
                                 </ul>

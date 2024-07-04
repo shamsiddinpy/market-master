@@ -1,19 +1,18 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Sum, F, Value, DecimalField, Min, Max
 from django.db.models.functions import Coalesce, TruncMonth
-from django.shortcuts import render
-from django.urls import path
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from djangoql.admin import DjangoQLSearchMixin
 
-from apps.models import Product, Category, ProductImages, User
+from apps.models import Product, Category, ProductImages, User, Profile, PaymeRequest
 from apps.models.products import Order, Region, District, Stream, Competition, SiteSetting
-from apps.models.proxy import BalanceReport, AdminUser, CurrierUser, OperatorUser, ManagerUser, OperatorProfile
-from apps.models.users import PaymeRequest, ProfileModel
+from apps.models.proxy import BalanceReport, AdminUser, CurrierUser, OperatorUser, ManagerUser, NewOrders, VisitOrders, \
+    ReadyOrders, DeliveryOrders, DeliveredOrders, CanceledOrders, ArchivedOrders, PhoneOrder
 
 
 @admin.register(Product)
@@ -24,8 +23,8 @@ class ProductModelAdmin(ModelAdmin):
 
 
 @admin.register(Category)
-class CategoryModelAdmin(ModelAdmin):
-    search_fields = ('name', 'author__name')
+class CategoryModelAdmin(DjangoQLSearchMixin, ModelAdmin):
+    search_fields = ('name',)
 
 
 @admin.register(ProductImages)
@@ -72,6 +71,12 @@ class CompetitionModelAdmin(ModelAdmin):
 class SiteSettingModelAdmin(ModelAdmin):
     list_display = ('name', 'delivery_to', 'operator_to', 'minimal_sum')
     search_fields = ('name',)
+
+    def has_add_permission(self, request, obj=None):
+        return super().has_delete_permission(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        return super().has_delete_permission(request, obj)
 
 
 @admin.register(BalanceReport)
@@ -222,29 +227,11 @@ class PaymeRequestAdmin(ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-@admin.register(User)
-class CustomUserAdmin(ModelAdmin):
-    ordering = ["first_name"]
-    list_display = (
-        "phone",
-        "email",
-        "first_name",
-        "last_name",
-        "is_staff",
-    )
-    search_fields = ("phone", "first_name", "last_name", "email")
-
+class CustomUserAdmin(UserAdmin):
+    ordering = 'phone',
     fieldsets = (
-        (
-            None,
-            {
-                "fields": ("avatar", "phone", "password"),
-            },
-        ),
-        (
-            _("Personal info"),
-            {"fields": ("first_name", "last_name", "email", "description")},
-        ),
+        (None, {"fields": ("phone", "password")}),
+        (_("Personal info"), {"fields": ("first_name", "last_name", "email")}),
         (
             _("Permissions"),
             {
@@ -259,145 +246,157 @@ class CustomUserAdmin(ModelAdmin):
         ),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
-    readonly_fields = ("password",)
-
-
-@admin.register(ManagerUser)
-class ManagerUserModelAdmin(admin.ModelAdmin):
-    fields = ('phone', 'password')
-
-    def save_model(self, request, obj, form, change):
-        if obj.password:
-            obj.password = make_password(obj.password)
-        obj.status = ManagerUser.Status.MANAGER
-        obj.is_staff = True
-        obj.save()
-        content_type = ContentType.objects.get_for_model(PaymeRequest)
-
-        view_codename = f'view_{content_type.model}'
-        view_permission, created = Permission.objects.get_or_create(
-            codename=view_codename,
-            content_type=content_type,
-            defaults={'name': f'Can view {content_type.name}'}
-        )
-        obj.user_permissions.add(view_permission)
-        super().save_model(request, obj, form, change)
-
-    def get_statistics(self, request):
-        paid_count = PaymeRequest.objects.filter(status=PaymeRequest.Status.PAID).count()
-        progress_count = PaymeRequest.objects.filter(status=PaymeRequest.Status.PROGRESS).count()
-        cancelled_count = PaymeRequest.objects.filter(status=PaymeRequest.Status.CANCELLED).count()
-
-        context = {
-            'paid_count': paid_count,
-            'progress_count': progress_count,
-            'cancelled_count': cancelled_count,
-        }
-        return render(request, 'apps/admin/payment_statistics_manager.html', context)
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("phone", "password1", "password2"),
+            },
+        ),
+    )
 
     class Media:
         js = (
             'https://code.jquery.com/jquery-3.6.0.min.js',
             'https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.6/jquery.inputmask.min.js',
-            'apps/custom/main.js',
+            'apps/custom/admin.js',
         )
+
+    def save_model(self, request, obj: User, form, change):
+        obj.status = self._status
+        super().save_model(request, obj, form, change)
+
+        if self._status == obj.Status.MANAGER:
+            obj.is_staff = True
+            content_type = ContentType.objects.get_for_model(PaymeRequest)
+            name = PaymeRequest.__name__.lower()
+            perm_codename_1 = f'change_{name}'
+            perm_codename_2 = f'view_{name}'
+            permissions = Permission.objects.filter(content_type=content_type,
+                                                    codename__in=(perm_codename_1, perm_codename_2))
+            obj.user_permissions.add(*permissions)
+            obj.save()
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(status=self._status)
+
+
+@admin.register(ManagerUser)
+class ManagerUserModelAdmin(CustomUserAdmin):
+    list_display = 'phone',
+    _status = User.Status.MANAGER
 
 
 @admin.register(AdminUser)
-class AdminUserModelAdmin(admin.ModelAdmin):
-    fields = 'phone', 'password'
-
-    def save_model(self, request, obj, form, change):
-        if obj.password:
-            obj.password = make_password(obj.password)
-        obj.status = User.Status.ADMIN
-        obj.is_staff = True
-        obj.save()
-        super().save_model(request, obj, form, change)
+class AdminUserModelAdmin(CustomUserAdmin):
+    _status = User.Status.ADMIN
 
 
 @admin.register(CurrierUser)
-class CurrierUserModelAdmin(admin.ModelAdmin):
-    fields = 'phone', 'password'
-
-    def save_model(self, request, obj, form, change):
-        if obj.password:
-            obj.password = make_password(obj.password)
-        obj.status = User.Status.CURRIER
-        obj.is_staff = True
-        obj.save()
-        super().save_model(request, obj, form, change)
+class CurrierUserModelAdmin(CustomUserAdmin):
+    _status = User.Status.CURRIER
 
 
 @admin.register(OperatorUser)
-class OperatorUserModelAdmin(admin.ModelAdmin):
-    fields = 'phone', 'password'
-
-    def save_model(self, request, obj, form, change):
-        if obj.password:
-            obj.password = make_password(obj.password)
-        obj.status = User.Status.OPERATOR
-        obj.is_staff = True
-        obj.save()
-        super().save_model(request, obj, form, change)
+class OperatorUserModelAdmin(CustomUserAdmin):
+    list_display = ('username', 'first_name', 'last_name', 'status')
+    list_filter = ('status',)
+    _status = User.Status.OPERATOR
 
 
-@admin.register(ProfileModel)
-class OperatorProfileModelAdmin(admin.ModelAdmin):
-    list_display = ('name', 'from_working_time', 'to_working_time')
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
-        if obj and obj.name.status != User.Status.OPERATOR:
-            self.exclude = ('from_working_time', 'to_working_time')
-        else:
-            self.exclude = ()
-        return form
+@admin.register(Profile)
+class OperatorProfileModelAdmin(ModelAdmin):
+    pass
 
 
 def get_app_list(self, request):
     custom_order = [
+        _('Products'),
+        _('Orders'),
+        _('Categories'),
+        _('Product Images'),
+        _('Streams'),
+        _('Payments'),
+        _('Profiles'),
+        _('Regions'),
+
+        _('Users'),
+        _('Operator Users'),
+        _('Admin Users'),
+        _('Manager Users'),
+        _('Currie Users'),
+
         _('New Orders'),
         _('Visit Orders'),
         _('Ready Orders'),
         _('Delivery Orders'),
         _('Delivered Orders'),
-        _('Cancelled Orders'),
+        _('Canceled Orders'),
         _('Missed Call Orders'),
         _('Archived Orders'),
-        _('Users'),
-        _('Orders'),
-        _('Products'),
-        _('Product Images'),
-        _('Categories'),
-        _('Regions'),
+
         _('Districts'),
         _('Site Settings'),
-        _('Streams'),
         _('Competitions'),
-        _('Payments'),
         _('User Balances'),
-        _('Site Settings'),
         _('Payme Requests'),
-        _('Operators'),
-        _('Admins'),
-        _('Managers'),
-        _('Curriers'),
-        _('Balance Reports')
+        _('Balances'),
     ]
-
     app_dict = self._build_app_dict(request)
-    app_list = sorted(app_dict.values(), key=lambda x: x['name'].lower())
-
-    def sort_key(model):
-        try:
-            return custom_order.index(model['name'])
-        except ValueError:
-            return len(custom_order)
-
+    app_list = sorted(app_dict.values(), key=lambda x: x["name"].lower())
     for app in app_list:
-        if app['app_label'] == 'apps':
-            app['models'] = [model for model in app['models'] if model['name'] in custom_order]
-            app['models'].sort(key=sort_key)
+        if app["app_label"] == "apps":
+            app["models"].sort(key=lambda x: custom_order.index(x["name"]))
 
     return app_list
+
+
+admin.AdminSite.get_app_list = get_app_list
+
+
+class OrderStatus(ModelAdmin):
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(status=self._status)
+
+
+@admin.register(NewOrders)
+class NewOrdersAdmin(OrderStatus):
+    list_display = ['status']
+
+    _status = Order.Status.NEW
+
+
+@admin.register(VisitOrders)
+class VisitOrdersAdmin(OrderStatus):
+    _status = Order.Status.VISIT
+
+
+@admin.register(ReadyOrders)
+class ReadyOrdersAdmin(OrderStatus):
+    _status = Order.Status.READY
+
+
+@admin.register(DeliveryOrders)
+class DeliveryOrdersAdmin(OrderStatus):
+    _status = Order.Status.DELIVERY
+
+
+@admin.register(DeliveredOrders)
+class DeliveredOrdersAdmin(OrderStatus):
+    _status = Order.Status.DELIVERED
+
+
+@admin.register(CanceledOrders)
+class CanceledOrdersAdmin(OrderStatus):
+    _status = Order.Status.CANCELED
+
+
+@admin.register(ArchivedOrders)
+class ArchivedOrdersAdmin(OrderStatus):
+    _status = Order.Status.ARCHIVED
+
+
+@admin.register(PhoneOrder)
+class PhoneOrderAdmin(OrderStatus):
+    _status = Order.Status.PHONE

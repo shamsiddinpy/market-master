@@ -23,7 +23,8 @@ INSTALLED_APPS = [
     'apps.apps.AppsConfig',
     'django_ckeditor_5',
     'sorl.thumbnail',
-    'parler'
+    'parler',
+    'djangoql',
 ]
 
 MIDDLEWARE = [
@@ -78,18 +79,18 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    # },
 ]
 
 # Internationalization
@@ -144,7 +145,6 @@ AWS_ACCESS_KEY_ID = 'tRW26479PRacGz3TKlea'
 AWS_SECRET_ACCESS_KEY = '4Me2Vj8VFfEIhXgyrhVYce8Yi2JYOQbksF6x4COu'
 AWS_STORAGE_BUCKET_NAME = 'aljahon'
 AWS_S3_ENDPOINT_URL = 'http://localhost:9000'
-
 
 customColorPalette = [
     {
@@ -274,8 +274,8 @@ JAZZMIN_SETTINGS = {
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
     "related_modal_active": False,
-    "custom_css": None,
-    "custom_js": "apps/assets/js/login_phone.js",
+    "custom_css": 'apps/custom/bootstrap-dark.css',
+    "custom_js": "apps/custom/admin.js",
     "use_google_fonts_cdn": True,
     "show_ui_builder": False,
     "changeform_format": "horizontal_tabs",
@@ -292,11 +292,31 @@ CACHES = {
 
 AUTHENTICATION_BACKENDS = [
     'apps.backends.PhoneBackend',
-    # 'django.contrib.auth.backends.ModelBackend',
 ]
 
 INTERNAL_IPS = [
-    # ...
     "127.0.0.1",
-    # ...
 ]
+
+
+LOGGING = {
+    'version': 1,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
+    }
+}

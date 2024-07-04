@@ -676,7 +676,7 @@
             ],
             [
               8727,
-              'asterisk operator'
+              'asterisk operator_apps'
             ],
             [
               8733,
@@ -1315,7 +1315,7 @@
             ],
             [
               8901,
-              'dot operator'
+              'dot operator_apps'
             ],
             [
               8968,

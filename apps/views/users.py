@@ -4,21 +4,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
 from django.core.cache import cache
 from django.db.models import Sum
-from django.http import HttpResponseRedirect
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
-from django.urls import reverse
-from django.urls import reverse_lazy
-from django.utils.translation import activate
-from django.utils.translation import gettext_lazy as _
+from django.urls import reverse_lazy, reverse
+from django.utils.translation import activate, gettext_lazy as _
 from django.views import View
 from django.views.generic import UpdateView, TemplateView, ListView, FormView
 
 from apps.forms import UserSettingsModelForm, UserSettingsImageModelForm, UserSettingsPasswordChangeForm, \
     LoginModelForm, PaymeModelForm
-from apps.models import User
-from apps.models.products import Region, District, Order, Stream, Competition, SiteSetting
-from apps.models.users import PaymeRequest
+from apps.models import User, Region, District, Order, Stream, Competition, SiteSetting, PaymeRequest
 from apps.utils import resize_image
 
 
@@ -30,7 +25,7 @@ class LoginUserView(FormView):
     def form_valid(self, form):
         user = form.get_user()
         if user is not None:
-            if user.status == User.Status.OPERATOR:
+            if user.status == user.Status.OPERATOR:
                 login(self.request, user)
                 return redirect('operator')
             else:
@@ -51,10 +46,8 @@ class LoginCheckView(View):
         phone = cache.get(code)
         if phone is None:
             return JsonResponse({'message': 'expired code'}, status=400)
-
         user = User.objects.get(phone=phone)
         login(request, user)
-
         return JsonResponse({'message': 'OK'})
 
 
@@ -181,10 +174,6 @@ class PaymeFormView(LoginRequiredMixin, FormView):
         form.save()
         messages.success(self.request, _('Payment made successfully!'))
         return redirect('withdraw')
-
-
-class WidgetsTemplateView(TemplateView):
-    template_name = 'apps/admin/widgets.html'
 
 
 class PaymeListView(LoginRequiredMixin, ListView):

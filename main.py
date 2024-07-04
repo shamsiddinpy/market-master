@@ -1,9 +1,10 @@
 #!/usr/bin/python
 import os
 from random import randint
+
+import django
 import telebot
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
-import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'root.settings')
 django.setup()
@@ -40,7 +41,9 @@ def send_welcome(message):
             bot.send_message(message.chat.id, text, parse_mode='MarkdownV2', reply_markup=inline_kb)
     except User.DoesNotExist:
         bot.send_message(message.chat.id,
-                         "Foydalanuvchi topilmadi. Iltimos, avval /start orqali kontaktingizni yuborish orqali ro'yxatdan o'ting.")
+                         "Foydalanuvchi topilmadi. Iltimos, avval /start orqali kontaktingizni yuborish orqali "
+                         "ro'yxatdan o'ting.")
+
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -64,6 +67,8 @@ def echo_message(message):
     obj, created = User.objects.get_or_create(phone=phone_number)
     obj.first_name = message.from_user.first_name
     obj.telegram_id = message.from_user.id
+    user_photo = bot.get_user_profile_photos(message.from_user.id)
+    print(user_photo)
     obj.save()
     code = set_code(obj.phone)
     text = f'🔒 Kodingiz:\n```{code}```'
@@ -91,7 +96,8 @@ def handle_new_password(call):
                                   reply_markup=inline_kb)
     except User.DoesNotExist:
         bot.send_message(call.message.chat.id,
-                         "Foydalanuvchi topilmadi. Iltimos, avval /start orqali kontaktingizni yuborish orqali ro'yxatdan o'ting.")
+                         "Foydalanuvchi topilmadi. Iltimos, avval /start orqali kontaktingizni yuborish orqali "
+                         "ro'yxatdan o'ting.")
 
 
 bot.infinity_polling()

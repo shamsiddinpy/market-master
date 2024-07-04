@@ -1,14 +1,16 @@
 from datetime import timedelta
 
 from dateutil.relativedelta import relativedelta
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q, Sum
 from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
-from django.views.generic import ListView, DetailView, FormView
+from django.views.generic import ListView, DetailView, FormView, TemplateView
 
 from apps.forms import OrderModelForm, StreamOrderModelForm
-from apps.models.products import Product, Category, Order, Stream, SiteSetting
+from apps.models import SiteSetting
+from apps.models.products import Product, Category, Order, Stream, Wishlist
 
 
 class ProductListView(ListView):
@@ -22,6 +24,7 @@ class ProductListView(ListView):
         category_slug = self.request.GET.get('category')
         if category_slug:
             queryset = queryset.filter(category__slug=category_slug)
+        queryset = queryset.order_by('-created_at')
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -84,6 +87,14 @@ class OrderProductSuccessDetailView(DetailView):
     context_object_name = 'order'
     slug_field = 'slug'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        order = self.get_object()
+        set_settings = SiteSetting.objects.first().delivery_to if SiteSetting.objects.exists() else 30000
+        context['total_sum'] = order.product.price * order.count + set_settings
+        context['delivery_to'] = set_settings
+        return context
+
 
 class OrderListView(LoginRequiredMixin, ListView):
     paginate_by = 5
@@ -104,7 +115,6 @@ class MarketProductListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
-        context['delivery_to'] = SiteSetting.objects.first()
         return context
 
     def get_queryset(self):
@@ -203,15 +213,41 @@ class UserRequestsListView(LoginRequiredMixin, ListView):
         return super().get_queryset().filter(user=self.request.user, stream__isnull=False)
 
 
-class ShoppingCard(ListView):
+class WishlistCard(LoginRequiredMixin, ListView):
+    queryset = Wishlist.objects.select_related('product')
     template_name = 'apps/products/shopping_card.html'
-    model = Product
+    context_object_name = 'wishlists'
 
     def get_queryset(self):
-        return super().get_queryset()
+        return super().get_queryset().filter(user=self.request.user)
+
+    # def get_queryset(self):
+    #     # Assuming ProductImage has a foreign key to Product with related_name='product_images'
+    #     # first_image_prefetch = Prefetch(
+    #     #     'product__product_images',
+    #     #     queryset=ProductImages.objects.order_by('id').distinct('product'),
+    #     #     to_attr='first_image'
+    #     # )
+    #
+    #     # wishlist_items = Wishlist.objects.filter(user=self.request.user).select_related('product').prefetch_related(first_image_prefetch)
+    #
+    #     # TODO teacher, select_related('')
+    #     # return Product.objects.filter(id__in=Wishlist.objects.filter(user=self.request.user).values_list('id', flat=True)).prefetch_related('product_images')
+    #     return super().get_queryset().filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        qs = self.get_queryset().aggregate(total_price=Sum('product__price'))
+        context.update(**qs)
+        return context
 
 
-class WishesUserListView(ListView):
-    template_name = 'apps/products/lake.html'
-    model = Product
-    context_object_name = 'wishes'
+@login_required
+def add_to_wishlist(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    Wishlist.objects.get_or_create(user=request.user, product=product)
+    return redirect('product_list_page')
+
+
+class AdminPageTemplateView(TemplateView):
+    template_name = 'apps/admin/admin_page.html'

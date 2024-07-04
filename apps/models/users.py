@@ -20,22 +20,22 @@ class User(AbstractUser):
         MANAGER = "manager", "Manager"
 
     username = None
-    phone = CharField(max_length=17, unique=True, validators=[phone_regex])
-    status = CharField(max_length=20, choices=Status.choices)
-    main_balance = DecimalField(max_digits=10, decimal_places=0, default=0)
-    amount_paid = DecimalField(max_digits=10, decimal_places=0, default=0)
+    phone = CharField(max_length=20, unique=True, verbose_name='foydalanuvchi telfon nomeri')
+    status = CharField(max_length=20, choices=Status.choices, verbose_name='foydalanuvchi holati')
+    main_balance = DecimalField(max_digits=10, decimal_places=0, default=0, verbose_name='foydalanuvchi balance')
+    amount_paid = DecimalField(max_digits=10, decimal_places=0, default=0,
+                               verbose_name='foydalanuvchi tola berilgan sumasi')  # delete
     intro = TextField(max_length=2000, blank=True, null=True, default="To enter")
     avatar = ImageField(upload_to='users/images', null=True,
-                        blank=True, default='images/icon-256x256.png')
+                        blank=True, default='images/icon-256x256.png', verbose_name='foydalanuvchi avatar rasmi')
     banner = ImageField(upload_to='users/banner/images', null=True,
-                        blank=True)
+                        blank=True, verbose_name='foydalanuvching banner rasmi')
     address = CharField(max_length=200, blank=True, null=True)
     description = CKEditor5Field(null=True, blank=True)
     is_activate = BooleanField(default=False)
-    region = ForeignKey('apps.Region', CASCADE, blank=True, null=True)
-    district = ForeignKey('apps.District', CASCADE, blank=True, null=True)
+    region = ForeignKey('apps.Region', CASCADE, blank=True, null=True, verbose_name='Viloyat')  # delete
+    district = ForeignKey('apps.District', CASCADE, blank=True, null=True, verbose_name='Tuman ')  # delete
     telegram_id = CharField(max_length=200, blank=True, null=True, unique=True)
-    users = CharField(max_length=25, choices=Status.choices, default=Status.USERS)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 
@@ -46,6 +46,13 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'
+
+    def clean(self, *args, **kwargs):
+        if self.phone.startswith('+998'):
+            phone_number = self.phone[4:]
+            phone_number = phone_number.translate(str.maketrans('', '', '() - '))
+            self.phone = phone_number
+        return super().clean(*args, **kwargs)
 
 
 class PaymeRequest(Model):
@@ -71,10 +78,10 @@ class PaymeRequest(Model):
         verbose_name_plural = "Payments"
 
 
-class ProfileModel(Model):
-    name = OneToOneField('apps.User', CASCADE)
-    from_working_time = DateTimeField(null=True, blank=True),
-    to_working_time = DateTimeField(null=True, blank=True),
+class Profile(Model):
+    operator = OneToOneField('apps.User', CASCADE, verbose_name='operator_ismi')
+    from_working_time = DateTimeField(null=True, blank=True, verbose_name='operatorning ishga kelish vaqti'),
+    to_working_time = DateTimeField(null=True, blank=True, verbose_name='operatorning ishdan ketish vaqti'),
 
     def __str__(self):
-        return self.name.phone
+        return self.operator.first_name
