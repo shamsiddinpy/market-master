@@ -1,0 +1,72 @@
+{% extends 'apps/admin/apps/operator.html' %}
+{% load static %}
+{% block operator_context %}
+    <div class="col-md-10" style="margin-left: 16%;">
+        <div class="bg-light w-75 m-auto mt-5">
+            <form method="GET">
+                <label for="id_product">Mahsulot:</label>
+                <select id="id_product" name="product" multiple>
+                    {% for product_operator in product_operators %}
+                        <option value="{{ product_operator.pk }}">{{ product_operator.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="id_region">Viloyat:</label>
+                <select id="id_region" name="region">
+                    {% for region in operator_regions %}
+                        <option value="{{ region.pk }}">{{ region.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="id_district">Tuman:</label>
+                <select id="id_district" name="district">
+                    {% for district in operator_districts %}
+                        <option value="{{ district.pk }}" class="district-option"
+                                data-region="{{ district.region_id }}">{{ district.name }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <button type="submit">Qidirish</button>
+            </form>
+            <div class="container">
+                {% for Operator_Order in Operator_Orders %}
+                    <div class="order-card">
+                        <h2>{{ Operator_Order.name }} - {{ Operator_Order.price }} so'm</h2>
+                        <h3>ZAKAZ ID: #{{ Operator_Order.id }}</h3>
+                        <ul>
+                            <li><strong>Reklama tarqatuvchi ID:</strong> {{ Operator_Order.advertiser_id }}</li>
+                            <li><strong>Client:</strong> {{ Operator_Order.client_name }} - {{ Operator_Order.phone }}</li>
+                            <li><strong>Address:</strong> {{ Operator_Order.address }}</li>
+                            <li><strong>Narxi:</strong> {{ Operator_Order.price }} so'm</li>
+                            <li><strong>Soni:</strong> {{ Operator_Order.quantity }} ta</li>
+                            <li><strong>Vaqti:</strong> {{ Operator_Order.created_at }}</li>
+                            <li><strong>Yangilangan vaqti:</strong> {{ Operator_Order.updated_at }}</li>
+                            <li><strong>Holati:</strong> {{ Operator_Order.status }}</li>
+                        </ul>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-success">Qabul qilish</button>
+                            <button class="btn btn-warning">Hold</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#id_region').change(function () {
+                var region_id = $(this).val();
+                $('.district-option').each(function () {
+                    var district_region_id = $(this).data('region');
+                    if (region_id === '' || region_id == district_region_id) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

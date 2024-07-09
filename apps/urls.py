@@ -1,7 +1,8 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
-from apps.views.operator import OperatorindexTemplateView, OperatorOrderTemplateView, OperatorNewTemplateView
+from apps.views.operator import OperatorIndexTemplateView, OperatorOrderTemplateView, OperatorNewTemplateView, \
+    OrderOperatorDetailView
 from apps.views.products import ProductDetailView, ProductListView, OrderProductSuccessDetailView, \
     MarketProductListView, StreamOrderListView, StreamOrderFormView, StatsListView, \
     OrderListView, UserRequestsListView, AdminPageTemplateView, add_to_wishlist, WishlistCard
@@ -30,21 +31,23 @@ urlpatterns = [
 
     path('profile', ProfileTemplateView.as_view(), name='profile'),
     path('profile/settings', UserSettingUpdateView.as_view(), name='user_settings_update'),
-    path('profile/settings/logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
+    path('profile/settings/logout', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     path('profile/settings/login', LoginUserView.as_view(), name='login_page'),
     path('profile/settings/login-message', LoginBotTemplateView.as_view(), name='login_bot'),
     path('profile/settings/login-check', LoginCheckView.as_view(), name='login_check'),
-    path('profile/settings/settings-image-update', UserSettingsImageUpdateView.as_view(),
+    path('profile/settings/user-image-update', UserSettingsImageUpdateView.as_view(),
          name='settings_images_update'),
     path('profile/orderid-products', OrderListView.as_view(), name='order_products'),
     path('profile/liked-product', FavoritesTemplateView.as_view(), name='favorites'),
-    path('profile/settings/settings-password-update', UserSettingsPassword.as_view(), name='settings_update_password'),
-    path('get_districts/', get_districts, name='get_districts'),
+    path('profile/settings/user-password-update', UserSettingsPassword.as_view(), name='settings_update_password'),
+    path('get_districts', get_districts, name='get_districts'),
 
 ]
 
 urlpatterns += [
-    path('operator', OperatorindexTemplateView.as_view(), name='operator_page'),
-    path('operator/prodcut_add', OperatorOrderTemplateView.as_view(), name='operator_order'),
+    path('operator', OperatorIndexTemplateView.as_view(), name='operator_page'),
     path('operator/new', OperatorNewTemplateView.as_view(), name='operator_new'),
+    path('operator/order/init/<int:order_id>/', OrderOperatorDetailView.as_view(), name='operator'),
+    path('operator/prodcut_add', OperatorOrderTemplateView.as_view(), name='operator_order'),
+
 ]

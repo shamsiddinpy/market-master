@@ -84,7 +84,7 @@ class ProductDetailView(FormView, DetailView):
 class OrderProductSuccessDetailView(DetailView):
     model = Order
     template_name = 'apps/products/order_product.html'
-    context_object_name = 'order'
+    context_object_name = 'orders'
     slug_field = 'slug'
 
     def get_context_data(self, **kwargs):

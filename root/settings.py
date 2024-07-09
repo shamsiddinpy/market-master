@@ -66,7 +66,7 @@ WSGI_APPLICATION = 'root.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3'
+        'NAME': BASE_DIR / 'db.sqlite3',
         # 'NAME': os.getenv('DB_NAME'),
         # 'USER': os.getenv('DB_USER'),
         # 'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
@@ -297,7 +297,6 @@ AUTHENTICATION_BACKENDS = [
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-
 
 LOGGING = {
     'version': 1,
