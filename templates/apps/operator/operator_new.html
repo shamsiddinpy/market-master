@@ -1,9 +1,11 @@
-{% extends 'apps/admin/apps/operator.html' %}
+{% extends 'apps/operator/operator.html' %}
 {% load static %}
+{% load thumbnail %}
+{% load humanize %}
 {% block operator_context %}
     <div class="col-md-10" style="margin-left: 16%;">
         <div class="bg-light w-75 m-auto mt-5">
-            <form method="GET">
+            <form method="GET" , action="{% url 'operator_search' %}">
                 <label for="id_product">Mahsulot:</label>
                 <select id="id_product" name="product" multiple>
                     {% for product_operator in product_operators %}
@@ -29,19 +31,24 @@
                 <button type="submit">Qidirish</button>
             </form>
             <div class="container">
-                {% for Operator_Order in Operator_Orders %}
+                {% for operator_order in operator_orders %}
                     <div class="order-card">
-                        <h2>{{ Operator_Order.name }} - {{ Operator_Order.price }} so'm</h2>
-                        <h3>ZAKAZ ID: #{{ Operator_Order.id }}</h3>
+                        <h2>{{ operator_order.name }} - {{ operator_order.product.price|intcomma }} so'm</h2>
+                        <h3>ZAKAZ ID: #{{ operator_order.id }}</h3>
                         <ul>
-                            <li><strong>Reklama tarqatuvchi ID:</strong> {{ Operator_Order.advertiser_id }}</li>
-                            <li><strong>Client:</strong> {{ Operator_Order.client_name }} - {{ Operator_Order.phone }}</li>
-                            <li><strong>Address:</strong> {{ Operator_Order.address }}</li>
-                            <li><strong>Narxi:</strong> {{ Operator_Order.price }} so'm</li>
-                            <li><strong>Soni:</strong> {{ Operator_Order.quantity }} ta</li>
-                            <li><strong>Vaqti:</strong> {{ Operator_Order.created_at }}</li>
-                            <li><strong>Yangilangan vaqti:</strong> {{ Operator_Order.updated_at }}</li>
-                            <li><strong>Holati:</strong> {{ Operator_Order.status }}</li>
+                            <li><strong>Reklama tarqatuvchi
+                                ID:</strong> {{ operator_order.product.referral_reward |default_if_none:'' }}</li>
+                            <li><strong>Client:</strong> {{ operator_order.client_name }} - {{ operator_order.phone }}
+                            </li>
+                            <li><strong>Address:</strong> {{ operator_order.district.name }}</li>
+                            <li><strong>Narxi:</strong> {{ operator_order.product.price|intcomma|default_if_none:'' }}
+                                so'm
+                            </li>
+                            <li><strong>Soni:</strong> {{ operator_order.count }} ta</li>
+                            <li><strong>Vaqti:</strong> {{ operator_order.created_at |  date:'Y. m. d. H:i' }}</li>
+                            <li><strong>Yangilangan vaqti:</strong> {{ operator_order.updated_at|date:'Y. m. d. H:i' }}
+                            </li>
+                            <li><strong>Holati:</strong> {{ operator_order.status }}</li>
                         </ul>
                         <div class="d-flex justify-content-end">
                             <button class="btn btn-success">Qabul qilish</button>

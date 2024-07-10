@@ -1,8 +1,7 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
-from apps.views.operator import OperatorIndexTemplateView, OperatorOrderTemplateView, OperatorNewTemplateView, \
-    OrderOperatorDetailView
+from apps.views.operator import OperatorIndexTemplateView, OperatorOrderListView, OperatorNewListView
 from apps.views.products import ProductDetailView, ProductListView, OrderProductSuccessDetailView, \
     MarketProductListView, StreamOrderListView, StreamOrderFormView, StatsListView, \
     OrderListView, UserRequestsListView, AdminPageTemplateView, add_to_wishlist, WishlistCard
@@ -46,8 +45,8 @@ urlpatterns = [
 
 urlpatterns += [
     path('operator', OperatorIndexTemplateView.as_view(), name='operator_page'),
-    path('operator/new', OperatorNewTemplateView.as_view(), name='operator_new'),
-    path('operator/order/init/<int:order_id>/', OrderOperatorDetailView.as_view(), name='operator'),
-    path('operator/prodcut_add', OperatorOrderTemplateView.as_view(), name='operator_order'),
+    path('operator/new', OperatorNewListView.as_view(), name='operator_new'),
+    path('operator/order/search', OperatorNewListView.as_view(), name='operator_search'),
+    path('operator/prodcut_add', OperatorOrderListView.as_view(), name='operator_order'),
 
 ]

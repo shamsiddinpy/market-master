@@ -27,7 +27,7 @@ class LoginUserView(FormView):
         if user is not None:
             if user.status == user.Status.OPERATOR:
                 login(self.request, user)
-                return redirect('operator')
+                return redirect('operator_new')
             else:
                 login(self.request, user)
                 return redirect('product_list_page')
