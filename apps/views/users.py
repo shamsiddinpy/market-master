@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash, login
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,7 +7,7 @@ from django.core.cache import cache
 from django.db.models import Sum
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.utils.translation import activate, gettext_lazy as _
 from django.views import View
 from django.views.generic import UpdateView, TemplateView, ListView, FormView
@@ -197,7 +198,16 @@ class FavoritesTemplateView(TemplateView):
     template_name = 'apps/admin/favorites.html'
 
 
-def change_language(request, language):
-    request.session['django_language'] = language
-    activate(language)
-    return HttpResponseRedirect(reverse('product_list_page'))
+def change_language(request, lang_code):
+    # Tilni faollashtirish
+    activate(lang_code)
+    request.session['django_language'] = lang_code
+
+    # Hozirgi sahifaga qaytarish
+    next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/'))
+    response = HttpResponseRedirect(next_url)
+
+    # Cookie ga yozish
+    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang_code)
+
+    return response

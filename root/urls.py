@@ -11,7 +11,7 @@ urlpatterns = i18n_patterns(
     path('admin/', admin.site.urls),
     path('', include('apps.urls')),
     path("ckeditor5/", include('django_ckeditor_5.urls'), name="ck_editor_5_upload_file"),
-    path('change_language/<str:language>/', change_language, name='change_language'),
+    path('change_language/<str:lang_code>/', change_language, name='change_language'),
     path("i18n/", set_language, name='set_language'),
     path("__debug__/", include("debug_toolbar.urls")),
 ) + static(MEDIA_URL, document_root=MEDIA_ROOT) + static(STATIC_URL, document_root=STATIC_ROOT)

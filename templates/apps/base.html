@@ -112,7 +112,7 @@
                                 </div>
                             </a>
                             </li>
-                        
+
                         </ul>
                     {% else %}
                         <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
@@ -270,12 +270,24 @@
                         </div>
                     </li>
                 </ul>
-                <li><a href="{% url 'change_language' 'uz' %}"><span class="flag-icon flag-icon-uz"></span>
-                    O'zbekcha</a></li>
-                <li><a href="{% url 'change_language' 'en' %}"><span class="flag-icon flag-icon-gb"></span> English</a>
-                </li>
-                <li><a href="{% url 'change_language' 'ru' %}"><span class="flag-icon flag-icon-ru"></span> Русский</a>
-                </li>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'change_language' 'uz' %}?next={{ request.path }}">
+                            <span class="flag-icon flag-icon-uz"></span> O'zbekcha
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'change_language' 'en' %}?next={{ request.path }}">
+                            <span class="flag-icon flag-icon-gb"></span> English
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'change_language' 'ru' %}?next={{ request.path }}">
+                            <span class="flag-icon flag-icon-ru"></span> Русский
+                        </a>
+                    </li>
+                </ul>
+
 
                 <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
                     <li class="nav-item">
