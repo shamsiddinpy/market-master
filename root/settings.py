@@ -231,20 +231,20 @@ LOGIN_URL = 'login_page'
 LOGOUT_REDIRECT_URL = '/'
 
 JAZZMIN_SETTINGS = {
-    "site_title": "Aljahon Admin",
+    "site_title": "Library Admin",
     "site_header": "Library",
     "site_brand": "Library",
-    "site_logo": "apps/alijon/download.png",
+    "site_logo": "books/img/logo.png",
     "login_logo": None,
     "login_logo_dark": None,
     "site_logo_classes": "img-circle",
     "site_icon": None,
-    "welcome_sign": "Welcome to the aljahon",
+    "welcome_sign": "Welcome to the library",
     "copyright": "Acme Library Ltd",
     "search_model": ["auth.User", "auth.Group"],
     "user_avatar": None,
     "topmenu_links": [
-        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
         {"model": "auth.User"},
         {"app": "books"},
