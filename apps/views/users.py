@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import PasswordChangeView, LogoutView
+from django.contrib.auth.views import PasswordChangeView
 from django.core.cache import cache
 from django.db.models import Sum
 from django.http import HttpResponseRedirect, JsonResponse
@@ -16,11 +16,6 @@ from apps.forms import UserSettingsModelForm, UserSettingsImageModelForm, UserSe
     LoginModelForm, PaymeModelForm
 from apps.models import User, Region, District, Order, Stream, Competition, SiteSetting, PaymeRequest
 from apps.utils import resize_image
-
-
-def logout_view(request):
-    logout(request)
-    return redirect('login_page')
 
 
 class LoginUserView(FormView):
@@ -38,6 +33,11 @@ class LoginUserView(FormView):
                 login(self.request, user)
                 return redirect('product_list_page')
         return super().form_valid(form)
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login_page')
 
 
 class LoginBotTemplateView(TemplateView):
