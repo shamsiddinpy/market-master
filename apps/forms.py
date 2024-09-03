@@ -15,7 +15,7 @@ class LoginModelForm(AuthenticationForm):
 
     class Meta:
         model = User
-        fields = ['phone', 'password']
+        fields = 'phone', 'password',
 
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get('phone_number')

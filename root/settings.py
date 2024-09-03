@@ -227,9 +227,6 @@ CKEDITOR_5_CONFIGS = {
     }
 }
 
-LOGIN_URL = 'login_page'
-LOGOUT_REDIRECT_URL = '/'
-
 JAZZMIN_SETTINGS = {
     "site_title": "Library Admin",
     "site_header": "Library",
@@ -244,7 +241,7 @@ JAZZMIN_SETTINGS = {
     "search_model": ["auth.User", "auth.Group"],
     "user_avatar": None,
     "topmenu_links": [
-        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
         {"model": "auth.User"},
         {"app": "books"},

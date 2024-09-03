@@ -10,7 +10,12 @@
                 <div class="col">
                     <h5 class="mb-0" id="followers"></h5>
                 </div>
-                <div class="col text-end"><a class="font-sans-serif" href="{% url 'market_page' %}">Kategoriyalar</a>
+                <div class="col text-end">
+                    {% if user.is_authenticated %}
+                        <a class="font-sans-serif" href="{% url 'market_page' %}">Kategoriyalar</a>
+                    {% else %}
+                        <a class="font-sans-serif" href="{% url 'login_page' %}">Kategoriyalar</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

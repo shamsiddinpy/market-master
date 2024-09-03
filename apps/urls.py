@@ -7,7 +7,8 @@ from apps.views.products import ProductDetailView, ProductListView, OrderProduct
     OrderListView, UserRequestsListView, AdminPageTemplateView, add_to_wishlist, WishlistCard
 from apps.views.users import UserSettingUpdateView, UserSettingsImageUpdateView, UserSettingsPassword, \
     CompetitionListView, LoginUserView, LoginBotTemplateView, \
-    LoginCheckView, PaymeFormView, PaymeListView, ProfileTemplateView, FavoritesTemplateView, get_districts
+    LoginCheckView, PaymeFormView, PaymeListView, ProfileTemplateView, FavoritesTemplateView, get_districts, \
+    logout_view
 
 urlpatterns = [
 
@@ -30,7 +31,7 @@ urlpatterns = [
 
     path('profile', ProfileTemplateView.as_view(), name='profile'),
     path('profile/settings', UserSettingUpdateView.as_view(), name='user_settings_update'),
-    path('profile/settings/logout', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
+    path('profile/settings/logout', logout_view, name='logout'),
     path('profile/settings/login', LoginUserView.as_view(), name='login_page'),
     path('profile/settings/login-message', LoginBotTemplateView.as_view(), name='login_bot'),
     path('profile/settings/login-check', LoginCheckView.as_view(), name='login_check'),
