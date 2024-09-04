@@ -4,11 +4,11 @@
 {% load absalut_uri %}
 {% load static %}
 {% block main_content %}
-    <div class="card mt-2 mb-2">
+    <div class="card mt-2 mb-3">
         <div class="card-header bg-light">
             <div class="row align-items-center">
                 <div class="col">
-                    <h5 class="mb-0" id="followers"></h5>
+                    <h5 class="mb-0" id="followers">ModaGo</h5>
                 </div>
                 <div class="col text-end">
                     {% if user.is_authenticated %}
@@ -19,11 +19,11 @@
                 </div>
             </div>
         </div>
-        <div class="card-body bg-light px-1 py-0">
-            <div class="row g-0 text-center fs--1">
+        <div class="card-body bg-light px-3 py-2">
+            <div class="row g-0 text-center fs--10">
                 {% for category in categories %}
                     <div class="col-4 col-md-4 col-lg-3 col-xx1-2 mb-1">
-                        <div class="bg-white dark__bg-1100 p-1 h-100">
+                        <div class="bg-white dark__bg-1100 p-1 h-120">
                             <a href="{% url 'product_list_page' %}?category={{ category.slug }}">
                                 <img class="img-thumbnail img-fluid mb-3 shadow-sm" src="{{ category.image.url }}"
                                      alt="" width="100">

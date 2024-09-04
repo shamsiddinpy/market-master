@@ -22,14 +22,22 @@ class ProductListView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         category_slug = self.request.GET.get('category')
+        search_query = self.request.GET.get('q')
         if category_slug:
             queryset = queryset.filter(category__slug=category_slug)
+        if search_query:
+            queryset = queryset.filter(
+                Q(name__icontains=search_query) |
+                Q(price__icontains=search_query)
+            )
+
         queryset = queryset.order_by('-created_at')
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
+        context['search_query'] = self.request.GET.get('q', '')
         return context
 
 
@@ -220,20 +228,6 @@ class WishlistCard(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user)
-
-    # def get_queryset(self):
-    #     # Assuming ProductImage has a foreign key to Product with related_name='product_images'
-    #     # first_image_prefetch = Prefetch(
-    #     #     'product__product_images',
-    #     #     queryset=ProductImages.objects.order_by('id').distinct('product'),
-    #     #     to_attr='first_image'
-    #     # )
-    #
-    #     # wishlist_items = Wishlist.objects.filter(user=self.request.user).select_related('product').prefetch_related(first_image_prefetch)
-    #
-    #     # TODO teacher, select_related('')
-    #     # return Product.objects.filter(id__in=Wishlist.objects.filter(user=self.request.user).values_list('id', flat=True)).prefetch_related('product_images')
-    #     return super().get_queryset().filter(user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

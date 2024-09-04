@@ -204,15 +204,9 @@ class FavoritesTemplateView(TemplateView):
 
 
 def change_language(request, lang_code):
-    # Tilni faollashtirish
     activate(lang_code)
     request.session['django_language'] = lang_code
-
-    # Hozirgi sahifaga qaytarish
     next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/'))
     response = HttpResponseRedirect(next_url)
-
-    # Cookie ga yozish
     response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang_code)
-
     return response
