@@ -5,14 +5,17 @@ certifi==2024.6.2
 charset-normalizer==3.3.2
 Django==5.0.6
 django-ckeditor-5==0.2.13
+django-debug-toolbar==4.4.6
 django-jazzmin==3.0.0
 django-parler==2.3
 django-storages==1.14.3
+djangoql==0.18.1
 fixtures==4.1.0
 idna==3.7
 jmespath==1.0.1
 pbr==6.0.0
 pillow==10.3.0
+ply==3.11
 pyTelegramBotAPI==4.19.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
