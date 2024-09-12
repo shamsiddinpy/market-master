@@ -68,7 +68,6 @@ def echo_message(message):
     obj.first_name = message.from_user.first_name
     obj.telegram_id = message.from_user.id
     user_photo = bot.get_user_profile_photos(message.from_user.id)
-    print(user_photo)
     obj.save()
     code = set_code(obj.phone)
     text = f'🔒 Kodingiz:\n```{code}```'
