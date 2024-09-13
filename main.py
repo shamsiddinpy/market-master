@@ -9,7 +9,8 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'root.settings')
 django.setup()
 
-bot = telebot.TeleBot('7518215310:AAG9qbfYQ2TjZasY_acb7ZaxI93uHura6X0')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+bot = telebot.TeleBot(BOT_TOKEN)
 
 from apps.models import User
 from django.core.cache import cache
