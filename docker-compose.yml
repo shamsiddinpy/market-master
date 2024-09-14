@@ -1,36 +1,60 @@
 services:
-  web:
-    build: .
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: shamsiddin/manogo
+    platform: 'linux/arm64'
+    env_file:
+      - .env
     ports:
-      - "8000:8000"
+      - '8000:8000'
     depends_on:
-      - db
-    environment:
-      - DATABASE_URL=postgres://postgres:password@db:5432/modago
-      - BOT_TOKEN=${BOT_TOKEN}
+      - postgres
+      - minio
     volumes:
-      - .:/app
+      - ./apps:/app/apps
+      - ./root:/app/root
+    command: sh -c "python apps/manage.py migrate && python apps/manage.py runserver 0.0.0.0:8000"
 
-  db:
-    image: postgres:13
+  postgres:
+    image: postgres:alpine
+    platform: 'linux/arm64'  # Changed to match your system architecture
+    env_file:
+      - .env
     environment:
-      - POSTGRES_DB=modago
-      - POSTGRES_USER=modago
-      - POSTGRES_PASSWORD=1
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   minio:
     image: minio/minio
+    platform: 'linux/arm64'  # Changed to match your system architecture
     ports:
       - "9000:9000"
       - "9001:9001"
     volumes:
       - minio_data:/data
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
-    command: server /data --console-address ":9001"
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+    command: server --console-address ":9001" /data
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: shamsiddin/manogo_bot
+    platform: 'linux/arm64'  # Changed to match your system architecture
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    command: python apps/main.py
 
 volumes:
   postgres_data:

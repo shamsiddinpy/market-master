@@ -10,6 +10,7 @@ from root.settings import MEDIA_URL, MEDIA_ROOT, STATIC_URL, STATIC_ROOT
 urlpatterns = i18n_patterns(
     path('admin/', admin.site.urls),
     path('', include('apps.urls')),
+    path('shops', include('apps.shops.urls')),
     path("ckeditor5/", include('django_ckeditor_5.urls'), name="ck_editor_5_upload_file"),
     path('change_language/<str:lang_code>/', change_language, name='change_language'),
     path("i18n/", set_language, name='set_language'),

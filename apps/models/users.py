@@ -18,6 +18,7 @@ class User(AbstractUser):
         OPERATOR = 'operator', "Operator"
         USERS = "user", "Users"
         MANAGER = "manager", "Manager"
+        SELLER = 'seller', 'Seller'
 
     username = None
     phone = CharField(max_length=20, unique=True, verbose_name='foydalanuvchi telfon nomeri')

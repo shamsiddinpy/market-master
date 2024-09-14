@@ -8,7 +8,7 @@ from apps.views.products import ProductDetailView, ProductListView, OrderProduct
 from apps.views.users import UserSettingUpdateView, UserSettingsImageUpdateView, UserSettingsPassword, \
     CompetitionListView, LoginUserView, LoginBotTemplateView, \
     LoginCheckView, PaymeFormView, PaymeListView, ProfileTemplateView, FavoritesTemplateView, get_districts, \
-    logout_view
+    logout_view, RegistrationView
 
 urlpatterns = [
 
@@ -33,6 +33,7 @@ urlpatterns = [
     path('profile/settings', UserSettingUpdateView.as_view(), name='user_settings_update'),
     path('profile/settings/logout', logout_view, name='logout'),
     path('profile/settings/login', LoginUserView.as_view(), name='login_page'),
+    path('profile/settings/register', RegistrationView.as_view(), name='register_page'),
     path('profile/settings/login-message', LoginBotTemplateView.as_view(), name='login_bot'),
     path('profile/settings/login-check', LoginCheckView.as_view(), name='login_check'),
     path('profile/settings/user-image-update', UserSettingsImageUpdateView.as_view(),

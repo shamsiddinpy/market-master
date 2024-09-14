@@ -1,10 +1,11 @@
-FROM python:3.11-alpine
+
+FROM python:3.11-alpine as build
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+COPY . /app
 
-COPY . .
+RUN --mount=type=cache,id=custom-pip,target=/root/.cache/pip pip install -r /app/requirements.txt
 
-CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000 & python bot/bot.py"]
+CMD ["python", "manage.py", "runserver", "0:8000"]
+

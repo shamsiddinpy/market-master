@@ -1,6 +1,6 @@
 import re
 
-from django.contrib.auth.forms import PasswordChangeForm, AuthenticationForm
+from django.contrib.auth.forms import PasswordChangeForm, AuthenticationForm, UserCreationForm
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.forms import CharField, PasswordInput, ModelForm, ModelChoiceField
@@ -8,6 +8,35 @@ from django.forms import CharField, PasswordInput, ModelForm, ModelChoiceField
 from apps.models import Product, User
 from apps.models.products import Order, Stream, Region, District
 from apps.models.users import PaymeRequest
+
+
+class RegisterModelForm(UserCreationForm):
+    password = CharField(widget=PasswordInput())
+    confirm_password = CharField(widget=PasswordInput())
+
+    class Meta:
+        model = User
+        fields = ['phone', 'status', 'password', 'confirm_password']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['phone'].label = 'Telefon raqam'
+        self.fields['status'].label = 'Kim bo\'lib ro\'yxatdan o\'tmoqchisiz?'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password != confirm_password:
+            raise ValidationError(
+                "Password and confirm password do not match"
+            )
+
+    def save(self, commit=False):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        return user
 
 
 class LoginModelForm(AuthenticationForm):

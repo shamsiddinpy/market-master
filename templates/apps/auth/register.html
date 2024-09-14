@@ -14,7 +14,7 @@
                         <div class="card-body p-4">
                             <div class="row flex-between-center">
                                 <div class="col-auto">
-                                    <h3>Kirish</h3>
+                                    <h3>Ro'yxatdan o'tish</h3>
                                 </div>
                             </div>
 
@@ -24,13 +24,34 @@
                                         Phone</label>
 
                                 </div>
-                                <input type="text" name="username" class="form-control">
+                                <input type="text" name="username" class="form-control"
+                                       placeholder="Telfon raqamingizni kiriting">
                             </div>
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <label class="form-label" for="split-login-password">Parol</label>
+                                    <label class="form-label" for="split-login-password">Kim bo'lib
+                                        kirmoqchisiz..?</label>
                                 </div>
-                                <input class="form-control" name="password" id="split-login-password" type="password">
+                                <!-- User role selection -->
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="role" id="roleUser" value="user"
+                                           checked>
+                                    <label class="form-check-label" for="roleUser">
+                                        Foydalanuvchi bo'lib kirish
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="role" id="roleSeller"
+                                           value="seller">
+                                    <label class="form-check-label" for="roleSeller">
+                                        Sotuvchi bo'lib kirish
+                                    </label>
+                                </div>
+                                <input class="form-control" name="password" id="split-login-password" type="password"
+                                       placeholder="Parolingizni kiriting">
+                                <br>
+                                <input class="form-control" name="password" id="split-login-password" type="password"
+                                       placeholder="Parolingizni kiriting">
                             </div>
                             <div class="row flex-between-center">
                                 <div class="col-auto">
@@ -42,11 +63,11 @@
                                     </div>
                                 </div>
 
-{#                                <div class="col-auto">#}
-                                {#                                    <a class="fs--1" href="{% url 'login_bot' %}">#}
-                                {#                                        Teligram bot orqali kirish#}
-                                {#                                    </a>#}
-                                {#                                </div>#}
+                                <div class="col-auto">
+                                    <a class="fs--1" href="{% url 'login_bot' %}">
+                                        Teligram bot orqali kirish
+                                    </a>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <button class="btn btn-primary d-block w-100 mt-3" type="submit" name="submit">

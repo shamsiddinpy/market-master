@@ -13,9 +13,22 @@ from django.views import View
 from django.views.generic import UpdateView, TemplateView, ListView, FormView
 
 from apps.forms import UserSettingsModelForm, UserSettingsImageModelForm, UserSettingsPasswordChangeForm, \
-    LoginModelForm, PaymeModelForm
+    LoginModelForm, PaymeModelForm, RegisterModelForm
 from apps.models import User, Region, District, Order, Stream, Competition, SiteSetting, PaymeRequest
 from apps.utils import resize_image
+
+
+class RegistrationView(FormView):
+    template_name = 'apps/auth/register.html'
+    form_class = RegisterModelForm
+    success_url = reverse_lazy('login_page')
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.set_password(form.cleaned_data['password'])
+        print(f"User would be created with phone: {user.phone}, status: {user.status}")
+        login(self.request, user)
+        return redirect('login_page')
 
 
 class LoginUserView(FormView):
