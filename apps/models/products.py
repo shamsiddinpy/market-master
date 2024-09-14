@@ -32,6 +32,7 @@ class ProductImages(CreatedBaseModel):
 class Category(CreatedBaseModel):
     name = CharField(max_length=100)
     slug = SlugField(unique=True, editable=False)
+    # parent = ForeignKey('self', CASCADE, null=True, blank=True, related_name='children')
     image = ImageField(upload_to='category/images', verbose_name="Image")
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

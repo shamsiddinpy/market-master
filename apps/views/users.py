@@ -24,11 +24,9 @@ class RegistrationView(FormView):
     success_url = reverse_lazy('login_page')
 
     def form_valid(self, form):
-        user = form.save(commit=False)
-        user.set_password(form.cleaned_data['password'])
-        print(f"User would be created with phone: {user.phone}, status: {user.status}")
-        login(self.request, user)
-        return redirect('login_page')
+        form.save()
+
+        return super().form_valid(form)
 
 
 class LoginUserView(FormView):

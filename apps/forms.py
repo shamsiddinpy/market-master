@@ -11,32 +11,21 @@ from apps.models.users import PaymeRequest
 
 
 class RegisterModelForm(UserCreationForm):
-    password = CharField(widget=PasswordInput())
-    confirm_password = CharField(widget=PasswordInput())
-
     class Meta:
         model = User
-        fields = ['phone', 'status', 'password', 'confirm_password']
+        fields = ['phone', 'status', 'password1', 'password2']  # password1 va password2 ni ishlatish kerak
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['phone'].label = 'Telefon raqam'
-        self.fields['status'].label = 'Kim bo\'lib ro\'yxatdan o\'tmoqchisiz?'
+    def clean_password2(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
 
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get("password")
-        confirm_password = cleaned_data.get("confirm_password")
-
-        if password != confirm_password:
-            raise ValidationError(
-                "Password and confirm password do not match"
-            )
-
-    def save(self, commit=False):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password"])
-        return user
+        if password1 and password2 and password1 != password2:
+            raise ValidationError("Ikkala parol mos kelmadi.")
+        if len(password1) < 8:
+            raise ValidationError("Parol kamida 8 ta belgidan iborat bo'lishi kerak.")
+        if password1.isdigit():
+            raise ValidationError("Parol faqat raqamlardan iborat bo'lmasligi kerak.")
+        return password2
 
 
 class LoginModelForm(AuthenticationForm):

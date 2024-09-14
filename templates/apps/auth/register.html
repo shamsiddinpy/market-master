@@ -6,7 +6,7 @@
         <div class="content_auth_form_group">
             <div class="content_auth_form_group_input">
                 <div class="card">
-                    <form method="POST" action="{% url 'login_page' %}">
+                    <form method="POST" action="{% url 'register_page' %}">
                         {% csrf_token %}
                         <div class="card-header bg-circle-shape bg-shape text-center p-2"><a
                                 class="font-sans-serif fw-bolder fs-4 z-index-1 position-relative link-light light"
@@ -19,39 +19,35 @@
                             </div>
 
                             <div class="mb-3">
-                                <div class="d-flex justify-content-between">
-                                    <label class="form-label" for="split-login-email">
-                                        Phone</label>
-
-                                </div>
-                                <input type="text" name="username" class="form-control"
+                                <label class="form-label" for="phone">Telefon raqam</label>
+                                <input type="text" name="phone" class="form-control"
                                        placeholder="Telfon raqamingizni kiriting">
                             </div>
                             <div class="mb-3">
-                                <div class="d-flex justify-content-between">
-                                    <label class="form-label" for="split-login-password">Kim bo'lib
-                                        kirmoqchisiz..?</label>
-                                </div>
-                                <!-- User role selection -->
+                                <label class="form-label" for="role">Kim bo'lib kirmoqchisiz..?</label>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="role" id="roleUser" value="user"
-                                           checked>
-                                    <label class="form-check-label" for="roleUser">
-                                        Foydalanuvchi bo'lib kirish
-                                    </label>
+                                    <input class="form-check-input" type="radio" name="status" id="roleUser"
+                                           value="user" checked>
+                                    <label class="form-check-label" for="roleUser">Foydalanuvchi bo'lib kirish</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="role" id="roleSeller"
+                                    <input class="form-check-input" type="radio" name="status" id="roleSeller"
                                            value="seller">
-                                    <label class="form-check-label" for="roleSeller">
-                                        Sotuvchi bo'lib kirish
-                                    </label>
+                                    <label class="form-check-label" for="roleSeller">Sotuvchi bo'lib kirish</label>
                                 </div>
-                                <input class="form-control" name="password" id="split-login-password" type="password"
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="password1">Parol</label>
+                                <input class="form-control" name="password1" id="password1" type="password"
                                        placeholder="Parolingizni kiriting">
-                                <br>
-                                <input class="form-control" name="password" id="split-login-password" type="password"
-                                       placeholder="Parolingizni kiriting">
+
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="password2">Parolni tasdiqlang</label>
+                                <input class="form-control" name="password2" id="password2" type="password"
+                                       placeholder="Parolingizni tasdiqlang">
+
                             </div>
                             <div class="row flex-between-center">
                                 <div class="col-auto">
@@ -69,6 +65,18 @@
                                     </a>
                                 </div>
                             </div>
+{#                            {% if form.errors %}#}
+{#                                <div class="alert alert-danger">#}
+{#                                    {% for field in form %}#}
+{#                                        {% if field.errors %}#}
+{#                                            <p>{{ field.label }}: {{ field.errors }}</p>#}
+{#                                        {% endif %}#}
+{#                                    {% endfor %}#}
+{#                                    {% if form.non_field_errors %}#}
+{#                                        <p>{{ form.non_field_errors }}</p>#}
+{#                                    {% endif %}#}
+{#                                </div>#}
+{#                            {% endif %}#}
                             <div class="mb-3">
                                 <button class="btn btn-primary d-block w-100 mt-3" type="submit" name="submit">
                                     Kirish
