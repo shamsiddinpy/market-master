@@ -40,6 +40,8 @@ class LoginUserView(FormView):
             if user.status == user.Status.OPERATOR:
                 login(self.request, user)
                 return redirect('operator_new')
+            elif user.status == user.Status.SELLER:
+                return redirect('seller_page')
             else:
                 login(self.request, user)
                 return redirect('product_list_page')

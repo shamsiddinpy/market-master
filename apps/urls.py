@@ -4,7 +4,7 @@ from django.urls import path
 from apps.views.operator import OperatorIndexTemplateView, OperatorOrderListView, OperatorNewListView
 from apps.views.products import ProductDetailView, ProductListView, OrderProductSuccessDetailView, \
     MarketProductListView, StreamOrderListView, StreamOrderFormView, StatsListView, \
-    OrderListView, UserRequestsListView, AdminPageTemplateView, add_to_wishlist, WishlistCard
+    OrderListView, UserRequestsListView, AdminPageTemplateView, add_to_wishlist, WishlistCard, SellerPageTemplateView
 from apps.views.users import UserSettingUpdateView, UserSettingsImageUpdateView, UserSettingsPassword, \
     CompetitionListView, LoginUserView, LoginBotTemplateView, \
     LoginCheckView, PaymeFormView, PaymeListView, ProfileTemplateView, FavoritesTemplateView, get_districts, \
@@ -51,4 +51,7 @@ urlpatterns += [
     path('operator/order/search', OperatorNewListView.as_view(), name='operator_search'),
     path('operator/prodcut_add', OperatorOrderListView.as_view(), name='operator_order'),
 
+]
+urlpatterns += [
+    path('seller', SellerPageTemplateView.as_view(), name='seller_page'),
 ]

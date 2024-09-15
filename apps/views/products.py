@@ -245,3 +245,7 @@ def add_to_wishlist(request, product_id):
 
 class AdminPageTemplateView(TemplateView):
     template_name = 'apps/admin/admin_page.html'
+
+
+class SellerPageTemplateView(TemplateView):
+    template_name = 'apps/seller/sotuvchi.html'
