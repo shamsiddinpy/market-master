@@ -128,7 +128,6 @@
                                 </div>
                             </a>
                             </li>
-                            </li>
                             <li class="nav-item"><a class="nav-link"
                                                     href="{% url 'order_products' %}"
                                                     aria-expanded="false">
@@ -144,7 +143,6 @@
 
                                 {% endif %}
                             </a>
-                                <!-- more inner pages-->
                             </li>
 
                         </ul>
@@ -228,70 +226,6 @@
                             class="font-sans-serif">ModaGo</span>
                     </div>
                 </a>
-                {#                <ul class="navbar-nav align-items-center d-none d-lg-block">#}
-                {#                    <li class="nav-item">#}
-                {#                        <div class="search-box" data-list='{"valueNames":["title"]}'>#}
-                {#                            <form class="position-relative" data-bs-toggle="search" data-bs-display="static">#}
-                {#                                <input class="form-control search-input fuzzy-search" type="search"#}
-                {#                                       placeholder="Search..." aria-label="Search"/>#}
-                {#                                <span class="fas fa-search search-box-icon"></span>#}
-                {##}
-                {#                            </form>#}
-                {#                            <div class="btn-close-falcon-container position-absolute end-0 top-50 translate-middle shadow-none"#}
-                {#                                 data-bs-dismiss="search">#}
-                {#                                <div class="btn-close-falcon" aria-label="Close"></div>#}
-                {#                            </div>#}
-                {#                            <div class="dropdown-menu border font-base start-0 mt-2 py-0 overflow-hidden w-100">#}
-                {#                                <div class="scrollbar list py-3" style="max-height: 24rem;">#}
-                {#                                    <h6 class="dropdown-header fw-medium text-uppercase px-card fs--2 pt-0 pb-2">#}
-                {#                                        Files</h6><a class="dropdown-item px-card py-2" href="#!">#}
-                {#                                    <div class="d-flex align-items-center">#}
-                {#                                        <div class="file-thumbnail me-2"><img#}
-                {#                                                class="border h-100 w-100 fit-cover rounded-3"#}
-                {#                                                src="{% static 'apps/assets/img/products/3-thumb.png' %}" alt=""/></div>#}
-                {#                                        <div class="flex-1">#}
-                {#                                            <h6 class="mb-0 title">iPhone</h6>#}
-                {#                                            <p class="fs--2 mb-0 d-flex"><span class="fw-semi-bold">Antony</span><span#}
-                {#                                                    class="fw-medium text-600 ms-2">27 Sep at 10:30 AM</span></p>#}
-                {#                                        </div>#}
-                {#                                    </div>#}
-                {#                                </a>#}
-                {#                                    <a class="dropdown-item px-card py-2" href="#!">#}
-                {#                                        <div class="d-flex align-items-center">#}
-                {#                                            <div class="file-thumbnail me-2"><img class="img-fluid"#}
-                {#                                                                                  src="{% static 'apps/assets/img/icons/zip.png' %}"#}
-                {#                                                                                  alt=""/></div>#}
-                {#                                            <div class="flex-1">#}
-                {#                                                <h6 class="mb-0 title">Falcon v1.8.2</h6>#}
-                {#                                                <p class="fs--2 mb-0 d-flex"><span class="fw-semi-bold">John</span><span#}
-                {#                                                        class="fw-medium text-600 ms-2">30 Sep at 12:30 PM</span></p>#}
-                {#                                            </div>#}
-                {#                                        </div>#}
-                {#                                    </a>#}
-                {##}
-                {#                                </div>#}
-                {##}
-                {#                            </div>#}
-                {#                        </div>#}
-                {#                    </li>#}
-                {#                </ul>#}
-                <ul class="nav">
-                    {#                    <li class="nav-item">#}
-                    {#                        <a class="nav-link" href="{% url 'change_language' 'uz' %}?next={{ request.path }}">#}
-                    {#                            <span class="flag-icon flag-icon-uz"></span> O'zbekcha#}
-                    {#                        </a>#}
-                    {#                    </li>#}
-                    {#                    <li class="nav-item">#}
-                    {#                        <a class="nav-link" href="{% url 'change_language' 'en' %}?next={{ request.path }}">#}
-                    {#                            <span class="flag-icon flag-icon-gb"></span> English#}
-                    {#                        </a>#}
-                    {#                    </li>#}
-                    {#                    <li class="nav-item">#}
-                    {#                        <a class="nav-link" href="{% url 'change_language' 'ru' %}?next={{ request.path }}">#}
-                    {#                            <span class="flag-icon flag-icon-ru"></span> Русский#}
-                    {#                        </a>#}
-                    {#                    </li>#}
-                </ul>
 
 
                 <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
@@ -308,24 +242,6 @@
                         </div>
                     </li>
 
-                    {#                    <li class="nav-item">#}
-                    {#                        <a class="nav-link px-0 notification-indicator notification-indicator-warning notification-indicator-fill fa-icon-wait"#}
-                    {#                           href="{% url 'wishlist' %}">#}
-                    {#                            <svg class="svg-inline--fa fa-shopping-cart fa-w-18" data-fa-transform="shrink-7"#}
-                    {#                                 style="font-size: 33px;transform-origin: 0.5625em 0.5em;" aria-hidden="true"#}
-                    {#                                 focusable="false" data-prefix="fas" data-icon="shopping-cart" role="img"#}
-                    {#                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg="">#}
-                    {#                                <g transform="translate(288 256)">#}
-                    {#                                    <g transform="translate(0, 0)  scale(0.5625, 0.5625)  rotate(0 0 0)">#}
-                    {#                                        <path fill="currentColor"#}
-                    {#                                              d="M528.12 301.319l47.273-208C578.806 78.301 567.391 64 551.99 64H159.208l-9.166-44.81C147.758 8.021 137.93 0 126.529 0H24C10.745 0 0 10.745 0 24v16c0 13.255 10.745 24 24 24h69.883l70.248 343.435C147.325 417.1 136 435.222 136 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-15.674-6.447-29.835-16.824-40h209.647C430.447 426.165 424 440.326 424 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-22.172-12.888-41.332-31.579-50.405l5.517-24.276c3.413-15.018-8.002-29.319-23.403-29.319H218.117l-6.545-32h293.145c11.206 0 20.92-7.754 23.403-18.681z"#}
-                    {#                                              transform="translate(-288 -256)"></path>#}
-                    {#                                    </g>#}
-                    {#                                </g>#}
-                    {#                            </svg>#}
-                    {#                            <span class="notification-indicator-number">{{ user.wishlist_set.count }}</span></a>#}
-                    {##}
-                    {#                    </li>#}
                     <li class="nav-item dropdown">
                         <a class="nav-link notification-indicator notification-indicator-primary px-0 fa-icon-wait"
                            id="navbarDropdownNotification" href="#" role="button" data-bs-toggle="dropdown"
@@ -724,7 +640,7 @@
 <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
 <script src="{% static 'apps/vendors/list.js/list.min.js' %}"></script>
 <script src="{% static 'apps/assets/js/theme.js' %}"></script>
-<script src="/static/apsp/vendors/overlayscrollbars/OverlayScrollbars.min.js"></script>
+<script src="{% static 'apps/vendors/overlayscrollbars/OverlayScrollbars.min.js' %}"></script>
 
 
 <script>

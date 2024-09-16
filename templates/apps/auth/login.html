@@ -1,7 +1,6 @@
 {% extends 'apps/base.html' %}
 {% load static %}
 {% block main_content %}
-
     <div class="content_auth_form">
         <div class="content_auth_form_group">
             <div class="content_auth_form_group_input">
@@ -24,8 +23,7 @@
                                         Phone</label>
 
                                 </div>
-                                <input type="text" name="username" class="form-control">
-                            </div>
+                                <input type="text" name="username" id="phone-mask" class="form-control"></div>
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between">
                                     <label class="form-label" for="split-login-password">Parol</label>
@@ -60,6 +58,12 @@
                 </div>
             </div>
         </div>
+{#        <script>#}
+{#            $('#phone-mask').inputmask({#}
+{#                "mask": "+\\9\\98(99) 999-99-99"#}
+{#            });#}
+{#            $('#messages-modal').modal('show');#}
+{#        </script>#}
 
     </div>
 

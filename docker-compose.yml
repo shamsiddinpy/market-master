@@ -13,13 +13,14 @@ services:
       - postgres
       - minio
     volumes:
-      - ./apps:/app/apps
-      - ./root:/app/root
-    command: sh -c "python apps/manage.py migrate && python apps/manage.py runserver 0.0.0.0:8000"
+      - .:/app
+    command: sh -c "cd /app && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
 
   postgres:
     image: postgres:alpine
-    platform: 'linux/arm64'  # Changed to match your system architecture
+    platform: 'linux/arm64'
     env_file:
       - .env
     environment:
@@ -33,7 +34,7 @@ services:
 
   minio:
     image: minio/minio
-    platform: 'linux/arm64'  # Changed to match your system architecture
+    platform: 'linux/arm64'
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -49,13 +50,14 @@ services:
       context: .
       dockerfile: Dockerfile
     image: shamsiddin/manogo_bot
-    platform: 'linux/arm64'  # Changed to match your system architecture
+    platform: 'linux/arm64'
     env_file:
       - .env
     depends_on:
       - backend
-    command: python apps/main.py
-
+    volumes:
+      - .:/app
+    command: sh -c "cd /app && python main.py"
 volumes:
   postgres_data:
   minio_data:
