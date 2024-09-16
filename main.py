@@ -12,7 +12,7 @@ django.setup()
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 bot = telebot.TeleBot(BOT_TOKEN)
 
-from apps.models import User
+from apps.websayt.models import User
 from django.core.cache import cache
 
 

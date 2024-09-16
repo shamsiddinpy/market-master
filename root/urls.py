@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.i18n import set_language
 
-from apps.views.users import change_language
+from apps.websayt.views.users import change_language
 from root.settings import MEDIA_URL, MEDIA_ROOT, STATIC_URL, STATIC_ROOT
 
 urlpatterns = i18n_patterns(

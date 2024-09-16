@@ -1,7 +1,7 @@
-from django.db.models import Model, CharField, ForeignKey, CASCADE, SlugField, PositiveSmallIntegerField, TextChoices, \
+from django.db.models import Model, CharField, ForeignKey, CASCADE, PositiveSmallIntegerField, TextChoices, \
     JSONField, BooleanField, TextField, ImageField, URLField, EmailField, FloatField
 
-from apps.models.products import CreatedBaseModel
+from apps.websayt.models.products import CreatedBaseModel
 
 
 class Country(CreatedBaseModel):
@@ -46,7 +46,7 @@ class Shop(CreatedBaseModel):
 
     status = CharField(max_length=10, choices=Status.choices, default=Status.ACTIVE)
     name = CharField(max_length=255, unique=True, null=True)
-    shop_category = ForeignKey("apps.ShopCategory", CASCADE, help_text="Do'kon nomini")
+    shop_category = ForeignKey("sh.ShopCategory", CASCADE, help_text="Do'kon nomini")
     phone_number = CharField(max_length=20, unique=True, help_text="Do'konchini nomeri")
     country = ForeignKey('apps.Country', on_delete=CASCADE, help_text="Qaysi davlatdan o'tganligi")
     currency = ForeignKey('apps.Currency', on_delete=CASCADE, help_text="Davlat pul birligi")

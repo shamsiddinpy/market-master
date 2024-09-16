@@ -1,10 +1,11 @@
+import sys
 from pathlib import Path
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+sys.path.append(os.path.join(BASE_DIR, 'apps'))
 SECRET_KEY = 'django-insecure-v#_skxy%yr5^dp^fi%eqvmqeskl@xp830&8_c9zwj!+z@83!(z'
 DEBUG = True
 
@@ -20,7 +21,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'debug_toolbar',
     'django.contrib.staticfiles',
-    'apps.apps.AppsConfig',
+
+    'apps.websayt',
+    'apps.bot',
     'django_ckeditor_5',
     'sorl.thumbnail',
     'parler',
@@ -40,7 +43,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'root.urls'
-AUTH_USER_MODEL = 'apps.User'
+AUTH_USER_MODEL = 'websayt.User'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -289,7 +292,7 @@ CACHES = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    'apps.backends.PhoneBackend',
+    'apps.websayt.backends.PhoneBackend',
 ]
 
 INTERNAL_IPS = [
