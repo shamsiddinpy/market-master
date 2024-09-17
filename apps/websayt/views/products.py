@@ -3,7 +3,7 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Q, Sum, F
 from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, FormView, TemplateView
@@ -40,7 +40,7 @@ class ProductListView(ListView):
         return context
 
 
-class ProductDetailView(FormView, DetailView):
+class ProductDetailView(LoginRequiredMixin, FormView, DetailView):
     model = Product
     template_name = 'apps/products/product_detail.html'
     form_class = OrderModelForm
@@ -55,13 +55,11 @@ class ProductDetailView(FormView, DetailView):
     def get_current_obj(self):
         pk = self.kwargs.get(self.pk_url_kwarg)
         slug = self.kwargs.get(self.slug_url_kwarg)
-
         if pk is not None:
             stream = get_object_or_404(Stream.objects.all(), pk=pk)
             stream.counter += 1
             stream.save()
             return stream.product, stream
-
         product = get_object_or_404(Product.objects.all(), slug=slug)
         return product, None
 
@@ -75,11 +73,7 @@ class ProductDetailView(FormView, DetailView):
         product, stream = self.get_current_obj()
 
         if stream:
-            price = product.price
-            if stream.benefit:
-                price += stream.benefit
-            if stream.discount:
-                price -= stream.discount
+            price = product.price - stream.discount
         else:
             price = product.price
 
@@ -98,19 +92,25 @@ class OrderProductSuccessDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         order = self.get_object()
         set_settings = SiteSetting.objects.first().delivery_to if SiteSetting.objects.exists() else 30000
-        context['total_sum'] = order.product.price * order.count + set_settings
+        if order.stream and order.stream.discount:
+            product_price = order.product.price - order.stream.discount
+        else:
+            product_price = order.product.price
+        context['product_price'] = product_price
+        context['total_sum'] = (product_price * order.count) + set_settings
         context['delivery_to'] = set_settings
+        context['discount'] = order.stream.discount if order.stream else 0
         return context
 
 
 class OrderListView(LoginRequiredMixin, ListView):
     paginate_by = 5
     template_name = 'apps/products/orders.html'
-    queryset = Order.objects.order_by('created_at')
+    model = Order
     context_object_name = 'orders'
 
     def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user).order_by('created_at')
+        return super().get_queryset().filter(user=self.request.user)
 
 
 class MarketProductListView(ListView):
@@ -129,7 +129,7 @@ class MarketProductListView(ListView):
         category = self.request.GET.get('category')
         if category == 'top_product':
             queryset = self.top_products()
-        if category:
+        elif category:
             queryset = queryset.filter(category__slug=category)
         query = self.request.GET.get('q')
         if query:
@@ -138,12 +138,17 @@ class MarketProductListView(ListView):
 
     def top_products(self):
         seven_days_ago = timezone.now() - timedelta(days=7)
-        product_ids = (
+        top_product_ids = (
             Order.objects.filter(created_at__gte=seven_days_ago, status=Order.Status.DELIVERED)
-            .values('product_id').annotate(total_quantity=Sum('count'))
-            .order_by('-total_quantity').values_list('product_id', flat=True)[:5]
+            .values('product_id')
+            .annotate(total_quantity=Sum('count'))
+            .order_by('-total_quantity')
+            .values_list('product_id', flat=True)[:5]
         )
-        return Product.objects.filter(id__in=product_ids)
+        top_product_ids = list(map(int, top_product_ids))
+        top_products = Product.objects.filter(id__in=top_product_ids)
+        sorted_products = sorted(top_products, key=lambda x: top_product_ids.index(x.id))
+        return sorted_products
 
 
 class StreamOrderFormView(LoginRequiredMixin, FormView):
@@ -244,5 +249,3 @@ def add_to_wishlist(request, product_id):
 
 class AdminPageTemplateView(TemplateView):
     template_name = 'apps/admin/admin_page.html'
-
-

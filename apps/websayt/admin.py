@@ -52,12 +52,18 @@ class OrderModelAdmin(ModelAdmin):
 
 @admin.register(Region)
 class RegionModelAdmin(ModelAdmin):
-    pass
+    list_per_page = 12
 
 
 @admin.register(District)
-class DistrictModelAdmin(ModelAdmin):
-    pass
+class DistrictAdmin(admin.ModelAdmin):
+    list_per_page = 10
+    list_display = ['name', 'region']
+    list_filter = ['region']
+    search_fields = ['name', 'region__name']
+
+    ordering = ['name']
+    list_display_links = ['name']
 
 
 @admin.register(Stream)

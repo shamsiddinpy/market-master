@@ -4,7 +4,6 @@
 {% block main_content %}
     <div class="container text-center pb-5 card" style="margin-top: 80px;">
         <div class="card-body" style="margin-top: 30px">
-
         </div>
 
         <img style="height: 100px; width:100px; margin-left:45%; margin-top: 30px"
@@ -16,23 +15,23 @@
         <table class="table">
             <thead>
             <tr>
-                <th scope="col">Mahsulot</th>   
+                <th scope="col">Mahsulot</th>
                 <th scope="col">Summa</th>
                 <th scope="col">Soni</th>
             </tr>
             </thead>
             <tbody>
             <tr>
-                <th scope="col">{{ orders.name }}</th>
-                <th scope="col">{{ orders.product.price|intcomma }} </th>
+                <th scope="col">{{ orders.product.name }}</th>
+                <th scope="col">{{ product_price|intcomma }} </th>
                 <th scope="col">{{ orders.count }}</th>
             </tr>
-
+        
             <tr>
                 <th scope="col">Yetkazib berish</th>
-                <th scope="col">{{ 30000 | intcomma }}</th>
+                <th scope="col">{{ delivery_to|intcomma }}</th>
+                <th scope="col"></th>
             </tr>
-
             </tbody>
         </table>
         <div class="row">

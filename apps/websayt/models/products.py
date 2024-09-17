@@ -108,7 +108,8 @@ class Order(CreatedBaseModel):
     count = PositiveIntegerField(default=1)
     status = CharField(max_length=30, choices=Status.choices, default=Status.NEW)
     product = ForeignKey('websayt.Product', CASCADE, verbose_name="Product", to_field='slug')
-    currier = ForeignKey('websayt.User', CASCADE, limit_choices_to={'status': User.Status.CURRIER}, null=True, blank=True,
+    currier = ForeignKey('websayt.User', CASCADE, limit_choices_to={'status': User.Status.CURRIER}, null=True,
+                         blank=True,
                          verbose_name="Currier")
     region = ForeignKey('websayt.Region', CASCADE, verbose_name='Region', blank=True, null=True)
     district = ForeignKey('websayt.District', CASCADE, verbose_name='District', null=True, blank=True)
@@ -121,7 +122,7 @@ class Order(CreatedBaseModel):
                                verbose_name="yo'naltiruvchi foydalanuvchi ")
 
     class Meta:
-        ordering = ['created_at']
+        ordering = ['-created_at']
         verbose_name = 'Order'
         verbose_name_plural = 'Orders'
 
@@ -147,6 +148,9 @@ class District(Model):
     class Meta:
         verbose_name = 'District'
         verbose_name_plural = 'Districts'
+
+    def __str__(self):
+        return self.name
 
 
 class Stream(Model):

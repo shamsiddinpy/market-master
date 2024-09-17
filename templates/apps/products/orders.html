@@ -5,13 +5,14 @@
 
     <div class="card mb-3">
         <div class="card-body">
-            <h3>My Orders</h3>
+            <h3>Mening buyurtmalarim</h3>
             <table class="table">
                 <thead>
                 <tr>
                     <th>Mahsulot</th>
                     <th>Soni</th>
                     <th>Narxi</th>
+                    <th>Jami</th>
                     <th>Vaqti</th>
                 </tr>
                 </thead>
@@ -20,15 +21,23 @@
                     <tr>
                         <td>{{ order.product.name }}</td>
                         <td>{{ order.count }}</td>
-                        <td>{{ order.product.price |intcomma }}</td>
+                        <td>{{ order.product.price|intcomma }}</td>
+                        <td>{{ order.total_price|intcomma }}</td>
                         <td>{{ order.created_at|date:'Y m d. H:i' }}</td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="4">Sizda hali buyurtma yo'q.</td>
+                        <td colspan="5">Sizda hali buyurtma yo'q.</td>
                     </tr>
                 {% endfor %}
                 </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="3"><strong>Jami:</strong></td>
+                    <td><strong>{{ total_price|intcomma }}</strong></td>
+                    <td></td>
+                </tr>
+                </tfoot>
             </table>
         </div>
     </div>

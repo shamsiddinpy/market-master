@@ -3,6 +3,76 @@
 {% load humanize %}
 {% load thumbnail %}
 {% block main_content %}
+    <style>
+        .token-input-container {
+            max-width: 600px;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+        }
+
+        .token-input-label {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .token-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .token-input:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+
+        .token-info {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .token-info-link {
+            display: flex;
+            align-items: center;
+            color: #4a90e2;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .token-info-link:hover,
+        .token-info-link:focus {
+            color: #1da1f2;
+            text-decoration: underline;
+            outline: none;
+        }
+
+        .token-info-icon {
+            margin-right: 8px;
+        }
+
+        .submit-button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .submit-button:hover {
+            background-color: #4a90e2;
+        }
+    </style>
     <div class="row">
         <div class="col-12">
             <div class="card mb-3 btn-reveal-trigger">
@@ -47,106 +117,115 @@
         </div>
     </div>
     <div class="row g-0">
-        <div class="col-lg-8 pe-lg-2">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="mb-0">Sozlamalar</h5>
-                </div>
-                <div class="card-body bg-light">
-                    <form class="row g-3" method="POST" action="{% url 'user_settings_update' %}">
-                        {% csrf_token %}
-                        <div class="col-lg-6">
-                            <label for="id_first_name">Ismi</label>
-                            <input type="text" name="first_name" class="form-control" maxlength="30" id="id_first_name"
-                                   value="{% if user.first_name %}{{ user.first_name }}{% endif %}">
-                        </div>
+    <div class="col-lg-8 pe-lg-2">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Sozlamalar</h5>
+            </div>
+            <div class="card-body bg-light">
+                <form class="row g-3" method="POST" action="{% url 'user_settings_update' %}">
+                    {% csrf_token %}
+                    <div class="col-lg-6">
+                        <label for="id_first_name">Ismi</label>
+                        <input type="text" name="first_name" class="form-control" maxlength="30" id="id_first_name"
+                               value="{% if user.first_name %}{{ user.first_name }}{% endif %}">
+                    </div>
 
-                        <div class="col-lg-6">
-                            <label for="id_last_name">Familiya</label>
-                            <input type="text" name="last_name" class="form-control" maxlength="40" id="id_last_name"
-                                   value="{% if user.last_name %}{{ user.last_name }}{% endif %}">
-                        </div>
+                    <div class="col-lg-6">
+                        <label for="id_last_name">Familiya</label>
+                        <input type="text" name="last_name" class="form-control" maxlength="40" id="id_last_name"
+                               value="{% if user.last_name %}{{ user.last_name }}{% endif %}">
+                    </div>
 
-                        <div class="col-lg-6">
-                            <label for="id_region">Viloyat</label>
-                            <select name="region" required class="form-control" id="id_region"
-                                    onchange="populateDistricts()">
-                                <option value="0">Viloyatni tanlang</option>
-                                {% for region in regions %}
-                                    <option value="{{ region.id }}"
-                                            {% if user.region == region %}selected{% endif %}>{{ region.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                    <div class="col-lg-6">
+                        <label for="id_region">Viloyat</label>
+                        <select name="region" required class="form-control" id="id_region"
+                                onchange="populateDistricts()">
+                            <option value="0">Viloyatni tanlang</option>
+                            {% for region in regions %}
+                                <option value="{{ region.id }}"
+                                        {% if user.region == region %}selected{% endif %}>{{ region.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-                        <div class="col-lg-6">
-                            <label for="id_district">Shahar/Tuman</label>
-                            <select name="district" class="form-control" id="id_district">
-                                <option value="">Shahar/Tuman ni tanlang</option>
-                                {% if user.district %}
-                                    <option value="{{ user.district.id }}" selected>{{ user.district.name }}</option>
-                                {% endif %}
-                            </select>
-                        </div>
+                    <div class="col-lg-6">
+                        <label for="id_district">Shahar/Tuman</label>
+                        <select name="district" class="form-control" id="id_district">
+                            <option value="">Shahar/Tuman ni tanlang</option>
+                            {% if user.district %}
+                                <option value="{{ user.district.id }}" selected>{{ user.district.name }}</option>
+                            {% endif %}
+                        </select>
+                    </div>
 
-                        <div class="col-lg-6">
-                            <label for="id_location">Manzil</label>
-                            <input type="text" name="address" class="form-control" maxlength="200" id="id_location"
-                                   value="{% if user.address %}{{ user.address }}{% endif %}">
-                        </div>
+                    <div class="col-lg-6">
+                        <label for="id_location">Manzil</label>
+                        <input type="text" name="address" class="form-control" maxlength="200" id="id_location"
+                               value="{% if user.address %}{{ user.address }}{% endif %}">
+                    </div>
 
-                        <div class="col-lg-6">
-                            <label for="id_telegram_id">Telegram id</label>
-                            <input type="text" name="telegram_id" class="form-control" maxlength="200"
-                                   id="id_telegram_id" readonly
-                                   value="{% if user.telegram_id %}{{ user.telegram_id }}{% endif %}">
-                        </div>
+                    <div class="col-lg-6">
+                        <label for="id_telegram_id">Telegram id</label>
+                        <input type="text" name="telegram_id" class="form-control" maxlength="200"
+                               id="id_telegram_id" readonly
+                               value="{% if user.telegram_id %}{{ user.telegram_id }}{% endif %}">
+                    </div>
 
-                        <div class="col-lg-6">
-                            <label for="id_description">Siz haqingizda</label>
-                            <textarea name="bio" cols="40" rows="10" class="form-control" maxlength="399"
-                                      id="id_description">{% if user.bio %}{{ user.bio }}{% endif %}</textarea>
-                        </div>
+                    <div class="col-lg-6">
+                        <label for="id_description">Siz haqingizda</label>
+                        <textarea name="bio" cols="40" rows="10" class="form-control" maxlength="399"
+                                  id="id_description">{% if user.bio %}{{ user.bio }}{% endif %}</textarea>
+                    </div>
 
-                        <div class="col-12 d-flex justify-content-end">
-                            <button class="btn btn-primary" type="submit">Saqlash</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="col-12 d-flex justify-content-end">
+                        <button class="btn btn-primary" type="submit">Saqlash</button>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="col-lg-4 ps-lg-2">
-            <div class="sticky-sidebar">
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h5 class="mb-0">Parolni o'zgartirish</h5>
-                    </div>
-                    <div class="card-body bg-light">
-                        <form id="password-change-form" method="POST" action="{% url 'settings_update_password' %}">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label class="form-label {% if form.errors.old_password %} is-invalid {% endif %}"
-                                       for="old-password">Oldingi parol</label>
-                                <input class="form-control" id="old-password" name="old_password" type="password">
-                                <div class="invalid-feedback" id="error-old_password">
-                                    {{ form.old_password|default_if_none:'' }}
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="new-password">Yangi parol</label>
-                                <input class="form-control" id="new-password" name="new_password1" type="password">
-                                <div class="invalid-feedback" id="error-new_password1"></div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="confirm-password">Yangi parolni takrorlash</label>
-                                <input class="form-control" id="confirm-password" name="new_password2" type="password">
-                                <div class="invalid-feedback" id="error-new_password2"></div>
-                            </div>
-                            <button class="btn btn-primary d-block w-100" type="submit">Parolni yangilash</button>
-                        </form>
-                    </div>
-                </div>
+    </div>
+    <div class="col-lg-4 ps-lg-2">
+    <div class="sticky-sidebar">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Parolni o'zgartirish</h5>
             </div>
+            <div class="card-body bg-light">
+                <form id="password-change-form" method="POST" action="{% url 'settings_update_password' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label {% if form.errors.old_password %} is-invalid {% endif %}"
+                               for="old-password">Oldingi parol</label>
+                        <input class="form-control" id="old-password" name="old_password" type="password">
+                        <div class="invalid-feedback" id="error-old_password">
+                            {{ form.old_password|default_if_none:'' }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="new-password">Yangi parol</label>
+                        <input class="form-control" id="new-password" name="new_password1" type="password">
+                        <div class="invalid-feedback" id="error-new_password1"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="confirm-password">Yangi parolni takrorlash</label>
+                        <input class="form-control" id="confirm-password" name="new_password2" type="password">
+                        <div class="invalid-feedback" id="error-new_password2"></div>
+                    </div>
+                    <button class="btn btn-primary d-block w-100" type="submit">Parolni yangilash</button>
+                </form>
+            </div>
+        </div>
+        <div class="token-input-container">
+            <label class="token-input-label" for="botfather-token">BotFather Token</label>
+            <input type="text" id="botfather-token" class="token-input" placeholder="BotFather tokenini kiriting">
+            <div class="token-info">
+                <a href="#" class="token-info-link">
+                    <span class="token-info-icon">ℹ️</span>
+                    <span>Botni qanday sozlash kerak</span>
+                </a>
+            </div>
+            <button class="submit-button">Jo'natish</button>
         </div>
     </div>
     <script>
