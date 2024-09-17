@@ -18,12 +18,10 @@
                             </div>
 
                             <div class="mb-3">
-                                <div class="d-flex justify-content-between">
-                                    <label class="form-label" for="split-login-email">
-                                        Phone</label>
-
-                                </div>
-                                <input type="text" name="username" id="phone-mask" class="form-control"></div>
+                                <label class="form-label" for="username">Telfon raqam</label>
+                                <input class="form-control" name="phone" id="phone-mask"
+                                       placeholder="Telfon raqamngizni kirting">
+                            </div>
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between">
                                     <label class="form-label" for="split-login-password">Parol</label>
@@ -53,18 +51,33 @@
                             </div>
 
                         </div>
+                        {% if messages %}
+                            <div id="error-message" class="alert alert-danger">
+                                {% for message in messages %}
+                                    <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </form>
 
                 </div>
             </div>
         </div>
-{#        <script>#}
-{#            $('#phone-mask').inputmask({#}
-{#                "mask": "+\\9\\98(99) 999-99-99"#}
-{#            });#}
-{#            $('#messages-modal').modal('show');#}
-{#        </script>#}
-
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var errorMessage = document.getElementById('error-message');
+            if (errorMessage) {
+                setTimeout(function () {
+                    errorMessage.style.transition = 'opacity 1s';
+                    errorMessage.style.opacity = '0';
+                    setTimeout(function () {
+                        errorMessage.style.display = 'none';
+                    }, 1000);
+                }, 3000);
+            }
+        });
+    </script>
 
 {% endblock %}

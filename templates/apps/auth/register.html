@@ -20,7 +20,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label" for="phone">Telefon raqam</label>
-                                <input type="text" name="phone" class="form-control"
+                                <input type="text" name="phone" id="phone-mask" class="form-control"
                                        placeholder="Telfon raqamingizni kiriting">
                             </div>
                             <div class="mb-3">
@@ -32,8 +32,9 @@
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="status" id="roleSeller"
-                                           value="seller">
-                                    <label class="form-check-label" for="roleSeller">Sotuvchi bo'lib kirish</label>
+                                           value="seller" disabled>
+                                    <label class="form-check-label text-muted" for="roleSeller">Sotuvchi bo'lib kirish
+                                        tez orada (Ishga tushadi)</label>
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -59,24 +60,12 @@
                                     </div>
                                 </div>
 
-                                <div class="col-auto">
-                                    <a class="fs--1" href="{% url 'login_bot' %}">
-                                        Teligram bot orqali kirish
-                                    </a>
-                                </div>
+                                {#                                <div class="col-auto">#}
+                                {#                                    <a class="fs--1" href="{% url 'login_bot' %}">#}
+                                {#                                        Teligram bot orqali kirish#}
+                                {#                                    </a>#}
+                                {#                                </div>#}
                             </div>
-{#                            {% if form.errors %}#}
-{#                                <div class="alert alert-danger">#}
-{#                                    {% for field in form %}#}
-{#                                        {% if field.errors %}#}
-{#                                            <p>{{ field.label }}: {{ field.errors }}</p>#}
-{#                                        {% endif %}#}
-{#                                    {% endfor %}#}
-{#                                    {% if form.non_field_errors %}#}
-{#                                        <p>{{ form.non_field_errors }}</p>#}
-{#                                    {% endif %}#}
-{#                                </div>#}
-{#                            {% endif %}#}
                             <div class="mb-3">
                                 <button class="btn btn-primary d-block w-100 mt-3" type="submit" name="submit">
                                     Kirish
@@ -84,12 +73,39 @@
                             </div>
 
                         </div>
+                        {% if form.errors %}
+                            <div id="error-message" class="alert alert-danger">
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <p>{{ field.label }}: {{ error }}</p>
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </form>
 
                 </div>
             </div>
         </div>
 
+
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var errorMessage = document.getElementById('error-message');
+            if (errorMessage) {
+                setTimeout(function () {
+                    errorMessage.style.transition = 'opacity 1s';
+                    errorMessage.style.opacity = '0';
+                    setTimeout(function () {
+                        errorMessage.style.display = 'none';
+                    }, 1000);
+                }, 3000);
+            }
+        });
+    </script>
 
 {% endblock %}

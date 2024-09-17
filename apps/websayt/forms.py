@@ -1,9 +1,10 @@
 import re
 
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import PasswordChangeForm, AuthenticationForm, UserCreationForm
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
-from django.forms import CharField, PasswordInput, ModelForm, ModelChoiceField
+from django.forms import CharField, PasswordInput, ModelForm, ModelChoiceField, TextInput
 
 from apps.websayt.models import Product, User
 from apps.websayt.models import Order, Stream, Region, District
@@ -13,7 +14,19 @@ from apps.websayt.models import PaymeRequest
 class RegisterModelForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['phone', 'status', 'password1', 'password2']  # password1 va password2 ni ishlatish kerak
+        fields = ['phone', 'status', 'password1', 'password2']
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if User.objects.filter(phone=phone).exists():
+            raise ValidationError("Bu telefon raqam allaqachon ro'yxatdan o'tgan.")
+        return phone
+
+    def clean_status(self):
+        status = self.cleaned_data.get('status')
+        if status == 'seller':
+            raise ValidationError("Hozircha sotuvchi sifatida ro'yxatdan o'tish imkoniyati mavjud emas.")
+        return status
 
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')
@@ -27,21 +40,48 @@ class RegisterModelForm(UserCreationForm):
             raise ValidationError("Parol faqat raqamlardan iborat bo'lmasligi kerak.")
         return password2
 
-
-class LoginModelForm(AuthenticationForm):
-    confirm_password = CharField(max_length=255, widget=PasswordInput(), required=False)
-
-    class Meta:
-        model = User
-        fields = 'phone', 'password',
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            user.save()
+        return user
 
     def clean_phone_number(self):
-        phone_number = self.cleaned_data.get('phone_number')
+        phone = self.cleaned_data.get('phone')
         pattern = re.compile(r'\d+')
-        digits = pattern.findall(phone_number)
+        digits = pattern.findall(phone)
         formatted_number = ''.join(digits[1:])
         return formatted_number
 
+
+class LoginModelForm(AuthenticationForm):
+    phone = CharField(label='Telefon raqam', widget=TextInput(
+        attrs={'placeholder': 'Telefon raqamingizni kiriting', 'id': 'phone-mask'}))
+    password = CharField(label='Parol',
+                         widget=PasswordInput(attrs={'placeholder': 'Parolingizni kiriting'}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        del self.fields['username']  # Remove the username field
+
+    class Meta:
+        model = User
+        fields = ('phone', 'password')
+
+    def clean(self):
+        phone = self.cleaned_data.get('phone')
+        password = self.cleaned_data.get('password')
+        if phone and password:
+            self.user_cache = authenticate(self.request, username=phone, password=password)
+            if self.user_cache is None:
+                raise ValidationError(
+                    "Iltimos, to'g'ri foydalanuvchi telefon raqami va parolni kiriting. "
+                    "Ahamiyat bering, ikkala maydon ham katta-kichik harfga sezgir bo'lishi mumkin."
+                )
+            else:
+                self.confirm_login_allowed(self.user_cache)
+        return self.cleaned_data
 
 class OrderModelForm(ModelForm):
     product = ModelChoiceField(queryset=Product.objects.all())

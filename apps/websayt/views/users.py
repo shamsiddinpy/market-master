@@ -3,13 +3,11 @@ from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
-from django.core.cache import cache
 from django.db.models import Sum
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.translation import activate, gettext_lazy as _
-from django.views import View
 from django.views.generic import UpdateView, TemplateView, ListView, FormView
 
 from apps.websayt.forms import RegisterModelForm, LoginModelForm, UserSettingsImageModelForm, UserSettingsModelForm, \
@@ -37,15 +35,23 @@ class LoginUserView(FormView):
     def form_valid(self, form):
         user = form.get_user()
         if user is not None:
-            if user.status == user.Status.OPERATOR:
-                login(self.request, user)
+            login(self.request, user)
+            if user.status == User.Status.OPERATOR:
                 return redirect('operator_new')
-            elif user.status == user.Status.SELLER:
+            elif user.status == User.Status.SELLER:
                 return redirect('seller_page')
+            elif user.status == User.Status.ADMIN:
+                return redirect('admin:index')
             else:
-                login(self.request, user)
+                messages.success(self.request, f"Xush kelibsiz, {user.phone}!")
                 return redirect('product_list_page')
-        return super().form_valid(form)
+        else:
+            messages.error(self.request, "Noto'g'ri foydalanuvchi ma'lumotlari")
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Kiritilgan ma'lumotlarda xatolik bor")
+        return super().form_invalid(form)
 
 
 def logout_view(request):
@@ -53,21 +59,21 @@ def logout_view(request):
     return redirect('login_page')
 
 
-class LoginBotTemplateView(TemplateView):
-    template_name = 'apps/auth/login_with_tlg_bot.html'
-
-
-class LoginCheckView(View):
-    def post(self, request, *args, **kwargs):
-        code = self.request.POST.get('code', '')
-        if len(code) != 6:
-            return JsonResponse({'message': 'error code'}, status=400)
-        phone = cache.get(code)
-        if phone is None:
-            return JsonResponse({'message': 'expired code'}, status=400)
-        user = User.objects.get(phone=phone)
-        login(request, user)
-        return JsonResponse({'message': 'OK'})
+# class LoginBotTemplateView(TemplateView):
+#     template_name = 'apps/auth/login_with_tlg_bot.html'
+#
+#
+# class LoginCheckView(View):
+#     def post(self, request, *args, **kwargs):
+#         code = self.request.POST.get('code', '')
+#         if len(code) != 6:
+#             return JsonResponse({'message': 'error code'}, status=400)
+#         phone = cache.get(code)
+#         if phone is None:
+#             return JsonResponse({'message': 'expired code'}, status=400)
+#         user = User.objects.get(phone=phone)
+#         login(request, user)
+#         return JsonResponse({'message': 'OK'})
 
 
 class UserSettingsImageUpdateView(LoginRequiredMixin, UpdateView):

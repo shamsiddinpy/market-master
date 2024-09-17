@@ -5,8 +5,8 @@ from apps.websayt.views.products import ProductListView, ProductDetailView, Orde
     AdminPageTemplateView, MarketProductListView, UserRequestsListView, StreamOrderListView, StatsListView, \
     StreamOrderFormView, add_to_wishlist, WishlistCard, OrderListView
 from apps.websayt.views.users import CompetitionListView, PaymeListView, PaymeFormView, ProfileTemplateView, \
-    UserSettingUpdateView, logout_view, LoginUserView, RegistrationView, LoginBotTemplateView, LoginCheckView, \
-    UserSettingsImageUpdateView, FavoritesTemplateView, UserSettingsPassword, get_districts
+    UserSettingUpdateView, logout_view, LoginUserView, RegistrationView, UserSettingsImageUpdateView, \
+    FavoritesTemplateView, UserSettingsPassword, get_districts
 
 urlpatterns = [
 
@@ -32,8 +32,8 @@ urlpatterns = [
     path('profile/settings/logout', logout_view, name='logout'),
     path('profile/settings/login', LoginUserView.as_view(), name='login_page'),
     path('profile/settings/register', RegistrationView.as_view(), name='register_page'),
-    path('profile/settings/login-message', LoginBotTemplateView.as_view(), name='login_bot'),
-    path('profile/settings/login-check', LoginCheckView.as_view(), name='login_check'),
+    # path('profile/settings/login-message', LoginBotTemplateView.as_view(), name='login_bot'),
+    # path('profile/settings/login-check', LoginCheckView.as_view(), name='login_check'),
     path('profile/settings/user-image-update', UserSettingsImageUpdateView.as_view(),
          name='settings_images_update'),
     path('profile/orderid-products', OrderListView.as_view(), name='order_products'),
