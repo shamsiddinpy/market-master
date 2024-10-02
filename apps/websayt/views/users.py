@@ -59,23 +59,6 @@ def logout_view(request):
     return redirect('login_page')
 
 
-# class LoginBotTemplateView(TemplateView):
-#     template_name = 'apps/auth/login_with_tlg_bot.html'
-#
-#
-# class LoginCheckView(View):
-#     def post(self, request, *args, **kwargs):
-#         code = self.request.POST.get('code', '')
-#         if len(code) != 6:
-#             return JsonResponse({'message': 'error code'}, status=400)
-#         phone = cache.get(code)
-#         if phone is None:
-#             return JsonResponse({'message': 'expired code'}, status=400)
-#         user = User.objects.get(phone=phone)
-#         login(request, user)
-#         return JsonResponse({'message': 'OK'})
-
-
 class UserSettingsImageUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserSettingsImageModelForm
