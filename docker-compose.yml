@@ -17,9 +17,10 @@ services:
     command: sh -c "cd /app && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     environment:
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      - IN_DOCKER=True
 
   postgres:
-    image: postgres:alpine
+    image: postgres:16-alpine
     platform: 'linux/arm64'
     env_file:
       - .env
@@ -45,19 +46,6 @@ services:
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
     command: server --console-address ":9001" /data
 
-  bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: shamsiddin/manogo_bot
-    platform: 'linux/arm64'
-    env_file:
-      - .env
-    depends_on:
-      - backend
-    volumes:
-      - .:/app
-    command: sh -c "cd /app && python main.py"
 volumes:
   postgres_data:
   minio_data:
