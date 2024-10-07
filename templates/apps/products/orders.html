@@ -1,8 +1,8 @@
 {% extends 'apps/base.html' %}
 {% load static %}
 {% load humanize %}
-{% block main_content %}
 
+{% block main_content %}
     <div class="card mb-3">
         <div class="card-body">
             <h3>Mening buyurtmalarim</h3>
@@ -12,7 +12,6 @@
                     <th>Mahsulot</th>
                     <th>Soni</th>
                     <th>Narxi</th>
-                    <th>Jami</th>
                     <th>Vaqti</th>
                 </tr>
                 </thead>
@@ -22,7 +21,6 @@
                         <td>{{ order.product.name }}</td>
                         <td>{{ order.count }}</td>
                         <td>{{ order.product.price|intcomma }}</td>
-                        <td>{{ order.total_price|intcomma }}</td>
                         <td>{{ order.created_at|date:'Y m d. H:i' }}</td>
                     </tr>
                 {% empty %}
@@ -34,8 +32,7 @@
                 <tfoot>
                 <tr>
                     <td colspan="3"><strong>Jami:</strong></td>
-                    <td><strong>{{ total_price|intcomma }}</strong></td>
-                    <td></td>
+                    <td colspan="2"><strong>{{ total_sum|intcomma }} so'm</strong></td>
                 </tr>
                 </tfoot>
             </table>

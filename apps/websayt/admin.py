@@ -12,11 +12,9 @@ from djangoql.admin import DjangoQLSearchMixin
 from apps.websayt.models.products import Product, Category, ProductImages, Order, Region, District, Stream, Competition, \
     SiteSetting
 from apps.websayt.models.proxy import BalanceReport, ManagerUser, AdminUser, CurrierUser, OperatorUser, NewOrders, \
-    VisitOrders, ReadyOrders, DeliveryOrders, DeliveredOrders, CanceledOrders, ArchivedOrders, PhoneOrder
+    VisitOrders, ReadyOrders, DeliveryOrders, DeliveredOrders, CanceledOrders, ArchivedOrders, PhoneOrder, Users
 from apps.websayt.models.users import User, PaymeRequest, Profile
 
-
-#
 
 @admin.register(Product)
 class ProductModelAdmin(ModelAdmin):
@@ -307,10 +305,13 @@ class CurrierUserModelAdmin(CustomUserAdmin):
     _status = User.Status.CURRIER
 
 
+@admin.register(Users)
+class UsersAdmin(CustomUserAdmin):
+    _status = User.Status.USERS
+
+
 @admin.register(OperatorUser)
 class OperatorUserModelAdmin(CustomUserAdmin):
-    list_display = ('username', 'first_name', 'last_name', 'status')
-    list_filter = ('status',)
     _status = User.Status.OPERATOR
 
 
@@ -321,6 +322,12 @@ class OperatorProfileModelAdmin(ModelAdmin):
 
 def get_app_list(self, request):
     custom_order = [
+        _('Users'),
+        _('Admin Users'),
+        _('Manager Users'),
+        _('Operator Users'),
+        _('Currie Users'),
+        _('Balances'),
         _('Products'),
         _('Orders'),
         _('Categories'),
@@ -329,13 +336,6 @@ def get_app_list(self, request):
         _('Payments'),
         _('Profiles'),
         _('Regions'),
-
-        _('Users'),
-        _('Operator Users'),
-        _('Admin Users'),
-        _('Manager Users'),
-        _('Currie Users'),
-
         _('New Orders'),
         _('Visit Orders'),
         _('Ready Orders'),
@@ -344,19 +344,18 @@ def get_app_list(self, request):
         _('Canceled Orders'),
         _('Missed Call Orders'),
         _('Archived Orders'),
-
         _('Districts'),
         _('Site Settings'),
         _('Competitions'),
         _('User Balances'),
         _('Payme Requests'),
-        _('Balances'),
     ]
     app_dict = self._build_app_dict(request)
     app_list = sorted(app_dict.values(), key=lambda x: x["name"].lower())
     for app in app_list:
         if app["app_label"] == "apps":
-            app["models"].sort(key=lambda x: custom_order.index(x["name"]))
+            app["models"].sort(
+                key=lambda x: custom_order.index(x["name"]) if x["name"] in custom_order else len(custom_order))
 
     return app_list
 

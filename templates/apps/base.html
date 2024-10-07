@@ -108,10 +108,10 @@
                             </li>
 
                             <li class="nav-item"><a class="nav-link"
-                                                    href="{% url 'order_products' %}"
+                                                    href="{% url 'login_page' %}"
                                                     aria-expanded="false">
-                                <div class="d-flex align-items-center"><span
-                                        class="nav-link-text ps-1">{% trans 'Orders' %}</span>
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-text ps-1">{% trans 'Orders' %}</span>
                                 </div>
                             </a>
                             </li>
@@ -131,17 +131,9 @@
                             <li class="nav-item"><a class="nav-link"
                                                     href="{% url 'order_products' %}"
                                                     aria-expanded="false">
-                                {% if user.is_authenticated %}
-                                    <div class="d-flex align-items-center">
-                                        <span class="nav-link-text ps-1">{% trans 'Orders' %}</span>
-                                    </div>
-                                {% else %}
-                                    <div class="alert alert-danger" role="alert">
-                                        Iltimos, tizimga kirish uchun <a href="{% url 'login_page' %}">login qiling</a>.
-                                    </div>
-
-
-                                {% endif %}
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-text ps-1">{% trans 'Orders' %}</span>
+                                </div>
                             </a>
                             </li>
 
@@ -376,7 +368,6 @@
                                                      aria-expanded="false">
                         <div class="avatar avatar-xl">
                             <img class="rounded-circle" src="{{ user.avatar.url }}" alt=""/>
-
                         </div>
                     </a>
                         <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="navbarDropdownUser">

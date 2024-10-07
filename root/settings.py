@@ -81,12 +81,13 @@ IN_DOCKER = os.environ.get('IN_DOCKER', False)
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST_DOCKER') if IN_DOCKER else os.environ.get('DB_HOST_LOCAL'),
-        'PORT': os.environ.get('DB_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'NAME': os.environ.get('DB_NAME'),
+        # 'USER': os.environ.get('DB_USER'),
+        # 'PASSWORD': os.environ.get('DB_PASSWORD'),
+        # 'HOST': os.environ.get('DB_HOST_LOCAL'),  # environ.get('DB_HOST_DOCKER') if IN_DOCKER else os.
+        # 'PORT': os.environ.get('DB_PORT'),
     }
 }
 # print(f"DATABASES config: {DATABASES}")

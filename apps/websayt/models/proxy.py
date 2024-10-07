@@ -4,6 +4,14 @@ from apps.websayt.models import User
 from apps.websayt.models.products import Order
 
 
+class Users(User):
+    class Meta:
+        proxy = True
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
+
+
+
 class AdminUser(User):
     class Meta:
         proxy = True

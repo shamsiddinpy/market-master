@@ -20,3 +20,6 @@ def is_new_product(created_at):
         return False
 
 
+@register.filter
+def multiply(value, arg):
+    return value * arg
