@@ -7,6 +7,7 @@ from apps.websayt.views.products import ProductListView, ProductDetailView, Orde
 from apps.websayt.views.users import CompetitionListView, PaymeListView, PaymeFormView, ProfileTemplateView, \
     UserSettingUpdateView, logout_view, LoginUserView, RegistrationView, UserSettingsImageUpdateView, \
     FavoritesTemplateView, UserSettingsPassword, get_districts
+from apps.websayt.views.bot import create_telegram_bot
 
 urlpatterns = [
 
@@ -48,5 +49,10 @@ urlpatterns += [
     path('operator/new', OperatorNewListView.as_view(), name='operator_new'),
     path('operator/order/search', OperatorNewListView.as_view(), name='operator_search'),
     path('operator/prodcut_add', OperatorOrderListView.as_view(), name='operator_order'),
+
+]
+
+urlpatterns += [
+    path('create-telegram-bot/', create_telegram_bot, name='create_telegram_bot'),
 
 ]

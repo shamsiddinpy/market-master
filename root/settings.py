@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
 SECRET_KEY = 'django-insecure-v#_skxy%yr5^dp^fi%eqvmqeskl@xp830&8_c9zwj!+z@83!(z'
 DEBUG = True
-
+# TELEGRAM_BOT_TOKEN = '7259087873:AAHF0S-ir7q-788QN8dcEuJlkts6142W9F0'
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [

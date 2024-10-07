@@ -59,32 +59,80 @@ def logout_view(request):
     return redirect('login_page')
 
 
+# class UserSettingsImageUpdateView(LoginRequiredMixin, UpdateView):
+#     model = User
+#     form_class = UserSettingsImageModelForm
+#     template_name = 'apps/admin/settings.html'
+#     success_url = reverse_lazy('settings_images_update')
+#
+#     def get_object(self):
+#         return self.request.user
+#
+#     def form_valid(self, form):
+#         user = form.save(commit=False)
+#
+#         if 'avatar' in form.files:
+#             avatar = form.files['avatar']
+#             resized_avatar = resize_image(avatar, size=(300, 300))
+#             if resized_avatar:
+#                 user.avatar.save(resized_avatar.name, resized_avatar)
+#
+#         if 'banner' in form.files:
+#             banner = form.files['banner']
+#             resized_banner = resize_image(banner, size=(1200, 300))
+#             if resized_banner:
+#                 user.banner.save(resized_banner.name, resized_banner)
+#
+#         user.save()
+#         return super().form_valid(form)
+from django.http import JsonResponse
+from django.views.generic import UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+
+from django.http import JsonResponse
+from django.views.generic import UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+
+
 class UserSettingsImageUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserSettingsImageModelForm
     template_name = 'apps/admin/settings.html'
-    success_url = reverse_lazy('settings_images_update')
+    success_url = reverse_lazy('user_settings_update')
 
     def get_object(self):
         return self.request.user
 
     def form_valid(self, form):
         user = form.save(commit=False)
+        response_data = {}
 
         if 'avatar' in form.files:
             avatar = form.files['avatar']
             resized_avatar = resize_image(avatar, size=(300, 300))
             if resized_avatar:
                 user.avatar.save(resized_avatar.name, resized_avatar)
+                response_data['avatar_url'] = user.avatar.url
 
         if 'banner' in form.files:
             banner = form.files['banner']
             resized_banner = resize_image(banner, size=(1200, 300))
             if resized_banner:
                 user.banner.save(resized_banner.name, resized_banner)
+                response_data['banner_url'] = user.banner.url
 
         user.save()
+
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse(response_data)
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse(form.errors, status=400)
+        return super().form_invalid(form)
 
 
 class UserSettingUpdateView(LoginRequiredMixin, UpdateView):
@@ -97,12 +145,15 @@ class UserSettingUpdateView(LoginRequiredMixin, UpdateView):
         return self.request.user
 
     def form_valid(self, form):
-        form.save()
+        if 'avatar' in self.request.FILES:
+            form.instance.avatar = self.request.FILES['avatar']
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['regions'] = Region.objects.all()
+        if self.object.region:
+            context['districts'] = District.objects.filter(region=self.object.region)
         return context
 
 

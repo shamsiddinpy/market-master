@@ -29,7 +29,7 @@ class User(AbstractUser):
     intro = TextField(max_length=2000, blank=True, null=True, default="To enter")
     avatar = ImageField(upload_to='users/images', null=True,
                         blank=True, default='images/icon-256x256.png', verbose_name='foydalanuvchi avatar rasmi')
-    banner = ImageField(upload_to='users/banner/images', null=True,
+    banner = ImageField(upload_to='users/banner/images', null=True, default='',
                         blank=True, verbose_name='foydalanuvching banner rasmi')
     address = CharField(max_length=200, blank=True, null=True)
     description = CKEditor5Field(null=True, blank=True)
@@ -86,3 +86,15 @@ class Profile(Model):
 
     def __str__(self):
         return self.operator.first_name
+
+
+class UserBot(Model):
+    user = OneToOneField(User, on_delete=CASCADE)
+    token = CharField(max_length=255)
+    bot_name = CharField(max_length=100)
+    bot_username = CharField(max_length=100)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s bot: {self.bot_name}"

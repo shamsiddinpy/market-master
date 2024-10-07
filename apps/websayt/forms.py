@@ -108,13 +108,28 @@ class StreamOrderModelForm(ModelForm):
         fields = 'name', 'product', 'discount', 'benefit'
 
 
+# class UserSettingsModelForm(ModelForm):
+#     region = ModelChoiceField(queryset=Region.objects.all(), required=False)
+#     district = ModelChoiceField(queryset=District.objects.all(), required=False)
+#
+#     class Meta:
+#         model = User
+#         fields = 'first_name', 'last_name', 'address', 'telegram_id', 'description', 'region', 'district'
+#         widgets = {
+#             'telegram_id': TextInput(attrs={'readonly': 'readonly'}),
+#         }
 class UserSettingsModelForm(ModelForm):
-    region = ModelChoiceField(queryset=Region.objects.all(), required=False)
-    district = ModelChoiceField(queryset=District.objects.all(), required=False)
-
     class Meta:
         model = User
-        fields = 'first_name', 'last_name', 'address', 'telegram_id', 'description', 'region', 'district'
+        fields = ['first_name', 'last_name', 'region', 'district', 'address', 'telegram_id', 'description', 'avatar']
+        widgets = {
+            'description': TextInput(attrs={'rows': 4}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['region'].queryset = Region.objects.all()
+        self.fields['district'].queryset = District.objects.all()
 
 
 class UserSettingsImageModelForm(ModelForm):

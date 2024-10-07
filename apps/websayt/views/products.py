@@ -153,7 +153,7 @@ class MarketProductListView(ListView):
             .order_by('-total_quantity')
             .values_list('product_id', flat=True)[:7]
         )
-        top_product_ids = list(map(int, top_product_ids))
+        top_product_ids = [id for id in top_product_ids if str(id).isdigit()]
         top_products = Product.objects.filter(id__in=top_product_ids)
         sorted_products = [product for id in top_product_ids for product in top_products if product.id == id]
         return sorted_products
