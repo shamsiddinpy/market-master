@@ -20,6 +20,8 @@ def is_new_product(created_at):
         return False
 
 
-@register.filter
-def multiply(value, arg):
-    return value * arg
+@register.filter()
+def mask_card_number(card_number):
+    if card_number and len(card_number) >= 8:
+        return f"{card_number[:4]}{'*' * (len(card_number) - 8)}{card_number[-4:]}"
+    return card_number
