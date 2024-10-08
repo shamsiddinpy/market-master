@@ -1,7 +1,7 @@
 {% extends 'apps/base.html' %}
 {% load static %}
 {% load humanize %}
-
+{% load absalut_uri %}
 {% block main_content %}
     <style>
         .header {
@@ -140,15 +140,18 @@
                         {% for payment in payments %}
                             <tr>
                                 <td>{{ payment.created_at|date:'Y-m-d H:i' }}</td>
-                                <td>{{ payment.card_number }}</td>
+                                <td>{{ payment.card_number| mask_card_number }}</td>
                                 <td>{{ payment.amount|intcomma }}</td>
                                 <td>{{ payment.status }}</td>
                                 <td>{{ payment.message|default_if_none:'' }}</td>
                                 <td>
-                                    <img src="{{ payment.image.url }}" class="img-thumbnail full-screen-image"
-                                         alt="Thumbnail" data-fullscreen-url="{{ payment.image.url }}" width="60"
-                                         height="60">
-
+                                    {% if payment.image %}
+                                        <img src="{{ payment.image.url }}" class="img-thumbnail full-screen-image"
+                                             alt="Thumbnail" data-fullscreen-url="{{ payment.image.url }}" width="60"
+                                             height="60">
+                                    {% else %}
+                                        <span>Rasm mavjud emas</span>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% empty %}

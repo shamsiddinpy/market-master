@@ -11,7 +11,6 @@ class Users(User):
         verbose_name_plural = 'Users'
 
 
-
 class AdminUser(User):
     class Meta:
         proxy = True

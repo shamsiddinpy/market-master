@@ -59,43 +59,6 @@ def logout_view(request):
     return redirect('login_page')
 
 
-# class UserSettingsImageUpdateView(LoginRequiredMixin, UpdateView):
-#     model = User
-#     form_class = UserSettingsImageModelForm
-#     template_name = 'apps/admin/settings.html'
-#     success_url = reverse_lazy('settings_images_update')
-#
-#     def get_object(self):
-#         return self.request.user
-#
-#     def form_valid(self, form):
-#         user = form.save(commit=False)
-#
-#         if 'avatar' in form.files:
-#             avatar = form.files['avatar']
-#             resized_avatar = resize_image(avatar, size=(300, 300))
-#             if resized_avatar:
-#                 user.avatar.save(resized_avatar.name, resized_avatar)
-#
-#         if 'banner' in form.files:
-#             banner = form.files['banner']
-#             resized_banner = resize_image(banner, size=(1200, 300))
-#             if resized_banner:
-#                 user.banner.save(resized_banner.name, resized_banner)
-#
-#         user.save()
-#         return super().form_valid(form)
-from django.http import JsonResponse
-from django.views.generic import UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
-
-from django.http import JsonResponse
-from django.views.generic import UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
-
-
 class UserSettingsImageUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserSettingsImageModelForm
@@ -171,7 +134,7 @@ def get_districts(request):
 class UserSettingsPassword(LoginRequiredMixin, PasswordChangeView):
     template_name = 'apps/admin/settings.html'
     form_class = UserSettingsPasswordChangeForm
-    success_url = reverse_lazy('settings_update_password')
+    success_url = reverse_lazy('user_settings_update')
 
     def form_valid(self, form):
         form.save()
@@ -230,7 +193,9 @@ class PaymeFormView(LoginRequiredMixin, FormView):
 
         user.main_balance -= amount
         user.save()
-        form.save()
+        payme_request = form.save(commit=False)
+        payme_request.user = user
+        payme_request.save()
         messages.success(self.request, _('Payment made successfully!'))
         return redirect('withdraw')
 
