@@ -23,8 +23,18 @@ class RegistrationView(FormView):
     success_url = reverse_lazy('login_page')
 
     def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
+        user = form.save(commit=False)
+        status = form.cleaned_data.get('status')
+        user.save()
+        login(self.request, user)
+        if status == User.Status.SELLER:
+            messages.success(self.request, "Magazin muvaffaqiyatli yaratildi!")
+            return redirect('login_page')
+        elif status == User.Status.USERS:
+            messages.success(self.request, "Ro'yxatdan o'tish muvaffaqiyatli yakunlandi!")
+            return redirect('login_page')
+        else:
+            return super().form_valid(form)
 
 
 class LoginUserView(FormView):
@@ -36,17 +46,15 @@ class LoginUserView(FormView):
         user = form.get_user()
         if user is not None:
             login(self.request, user)
-            if user.status == User.Status.OPERATOR:
-                return redirect('operator_new')
-            elif user.status == User.Status.SELLER:
-                return redirect('seller_page')
-            elif user.status == User.Status.ADMIN:
-                return redirect('admin:index')
+            if user.status == User.Status.SELLER:
+                return redirect('dashboard')
+            elif user.status == User.Status.USERS:
+                return redirect('product_list_page')
+            elif user.status == User.Status.OPERATOR:
+                return redirect('operator_page')
             else:
-                messages.success(self.request, f"Xush kelibsiz, {user.phone}!")
                 return redirect('product_list_page')
         else:
-            messages.error(self.request, "Noto'g'ri foydalanuvchi ma'lumotlari")
             return self.form_invalid(form)
 
     def form_invalid(self, form):

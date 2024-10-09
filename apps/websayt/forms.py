@@ -22,12 +22,6 @@ class RegisterModelForm(UserCreationForm):
             raise ValidationError("Bu telefon raqam allaqachon ro'yxatdan o'tgan.")
         return phone
 
-    def clean_status(self):
-        status = self.cleaned_data.get('status')
-        if status == 'seller':
-            raise ValidationError("Hozircha sotuvchi sifatida ro'yxatdan o'tish imkoniyati mavjud emas.")
-        return status
-
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
@@ -56,29 +50,20 @@ class RegisterModelForm(UserCreationForm):
 
 
 class LoginModelForm(AuthenticationForm):
-    phone = CharField(label='Telefon raqam', widget=TextInput(
-        attrs={'placeholder': 'Telefon raqamingizni kiriting', 'id': 'phone-mask'}))
-    password = CharField(label='Parol',
-                         widget=PasswordInput(attrs={'placeholder': 'Parolingizni kiriting'}))
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        del self.fields['username']  # Remove the username field
+    username = CharField(label='Telefon raqam', max_length=20)
 
     class Meta:
         model = User
-        fields = ('phone', 'password')
+        fields = ('username', 'password1')
 
     def clean(self):
-        phone = self.cleaned_data.get('phone')
+        phone = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
+
         if phone and password:
-            self.user_cache = authenticate(self.request, username=phone, password=password)
+            self.user_cache = authenticate(self.request, phone=phone, password=password)
             if self.user_cache is None:
-                raise ValidationError(
-                    "Iltimos, to'g'ri foydalanuvchi telefon raqami va parolni kiriting. "
-                    "Ahamiyat bering, ikkala maydon ham katta-kichik harfga sezgir bo'lishi mumkin."
-                )
+                raise ValidationError("Telefon raqami yoki parol noto'g'ri")
             else:
                 self.confirm_login_allowed(self.user_cache)
         return self.cleaned_data
@@ -108,16 +93,6 @@ class StreamOrderModelForm(ModelForm):
         fields = 'name', 'product', 'discount', 'benefit'
 
 
-# class UserSettingsModelForm(ModelForm):
-#     region = ModelChoiceField(queryset=Region.objects.all(), required=False)
-#     district = ModelChoiceField(queryset=District.objects.all(), required=False)
-#
-#     class Meta:
-#         model = User
-#         fields = 'first_name', 'last_name', 'address', 'telegram_id', 'description', 'region', 'district'
-#         widgets = {
-#             'telegram_id': TextInput(attrs={'readonly': 'readonly'}),
-#         }
 class UserSettingsModelForm(ModelForm):
     class Meta:
         model = User
