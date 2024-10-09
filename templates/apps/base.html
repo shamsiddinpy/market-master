@@ -101,6 +101,7 @@
                             <li class="nav-item"><a class="nav-link"
                                                     href="{% url 'product_list_page' %}"
                                                     aria-expanded="false">
+                              
                                 <div class="d-flex align-items-center"><span
                                         class="nav-link-text ps-1">{% trans 'Homepage' %}</span>
                                 </div>
@@ -370,7 +371,7 @@
                             <div class="avatar avatar-xl">
                                 <img class="rounded-circle" src="{{ user.avatar.url }}" alt=""/>
                             </div>
-{#                            <span class="user-number">{{ user.phone }}</span> <!-- Foydalanuvchi raqami -->#}
+                            {#                            <span class="user-number">{{ user.phone }}</span> <!-- Foydalanuvchi raqami -->#}
 
                         </a>
                         <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="navbarDropdownUser">

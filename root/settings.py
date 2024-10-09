@@ -24,6 +24,7 @@ INSTALLED_APPS = [
 
     'apps.websayt',
     'apps.shared',
+    'apps.seller',
 
     'django_ckeditor_5',
     'sorl.thumbnail',
